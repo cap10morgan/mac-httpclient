@@ -106,6 +106,7 @@ static NSString *makeHTTPRequest(HTTPServiceCFNetworkImpl *self, id delegate, NS
     NSString *result = nil;
     CFHTTPMessageRef request = createHTTPMessageRef(self, URL, method, body, headers);
     CFHTTPMessageRef response = NULL;
+    CFHTTPAuthenticationRef auth = NULL;
     NSInteger count = 0;
     
     do {
@@ -130,7 +131,7 @@ static NSString *makeHTTPRequest(HTTPServiceCFNetworkImpl *self, id delegate, NS
         }
         
         BOOL forProxy = isAuthChallengeForProxyStatusCode(responseStatusCode);
-        CFHTTPAuthenticationRef auth = CFHTTPAuthenticationCreateFromResponse(kCFAllocatorDefault, response);
+        auth = CFHTTPAuthenticationCreateFromResponse(kCFAllocatorDefault, response);
         
         NSString *scheme = [(id)CFHTTPAuthenticationCopyMethod(auth) autorelease];
         NSString *realm  = [(id)CFHTTPAuthenticationCopyRealm(auth) autorelease];
@@ -179,16 +180,18 @@ static NSString *makeHTTPRequest(HTTPServiceCFNetworkImpl *self, id delegate, NS
         if (domain && CFHTTPAuthenticationRequiresAccountDomain(auth)) {
             [creds setObject:[domain absoluteString] forKey:(id)kCFHTTPAuthenticationAccountDomain];
         }
-        
-        if (false == CFHTTPMessageApplyCredentialDictionary(request, auth, (CFDictionaryRef)creds, NULL)) {
-            NSLog(@"OH BOTHER. Can't add add auth. dunno why. FAIL.");
-            result = nil;
-            goto leave;
-        }
+
+        Boolean credentialsApplied = CFHTTPMessageApplyCredentialDictionary(request, auth, (CFDictionaryRef)creds, NULL);
         
         if (auth) {
             CFRelease(auth);
             auth = NULL;
+        }
+
+        if (!credentialsApplied) {
+            NSLog(@"OH BOTHER. Can't add add auth credentials to request. dunno why. FAIL.");
+            result = nil;
+            goto leave;
         }
         
     } while (1);
@@ -202,7 +205,11 @@ leave:
         CFRelease(response);
         response = NULL;
     }
-    
+    if (auth) {
+        CFRelease(auth);
+        auth = NULL;
+    }
+        
     return result;
 }
 
