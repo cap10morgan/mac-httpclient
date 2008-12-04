@@ -770,7 +770,7 @@
 															<object class="NSTextView" id="743106138">
 																<reference key="NSNextResponder" ref="457317733"/>
 																<int key="NSvFlags">2322</int>
-																<string key="NSFrameSize">{681, 11}</string>
+																<string key="NSFrameSize">{681, 14}</string>
 																<reference key="NSSuperview" ref="457317733"/>
 																<object class="NSTextContainer" key="NSTextContainer" id="419718161">
 																	<object class="NSLayoutManager" key="NSLayoutManager">
@@ -825,7 +825,7 @@
 																	<nil key="NSDefaultParagraphStyle"/>
 																</object>
 																<int key="NSTVFlags">6</int>
-																<string key="NSMaxSize">{919, 1e+07}</string>
+																<string key="NSMaxSize">{1377, 1e+07}</string>
 																<string key="NSMinize">{223, 0}</string>
 																<nil key="NSDelegate"/>
 															</object>
@@ -2221,6 +2221,26 @@
 					</object>
 					<int key="connectionID">100212</int>
 				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">enabled: busy</string>
+						<reference key="source" ref="869664436"/>
+						<reference key="destination" ref="512844837"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="869664436"/>
+							<reference key="NSDestination" ref="512844837"/>
+							<string key="NSLabel">enabled: busy</string>
+							<string key="NSBinding">enabled</string>
+							<string key="NSKeyPath">busy</string>
+							<object class="NSDictionary" key="NSOptions">
+								<string key="NS.key.0">NSValueTransformerName</string>
+								<string key="NS.object.0">NSNegateBoolean</string>
+							</object>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">100214</int>
+				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
 				<object class="NSArray" key="orderedObjects">
@@ -3100,7 +3120,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">100212</int>
+			<int key="maxID">100214</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">
