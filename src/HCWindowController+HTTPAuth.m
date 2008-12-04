@@ -51,17 +51,7 @@
         }
 
         [httpAuthSheet makeFirstResponder:authUsernameTextField];
-    
-//        [NSApp beginSheet:httpAuthSheet
-//           modalForWindow:[self window]
-//            modalDelegate:self
-//           didEndSelector:nil
-//              contextInfo:NULL];
-
         BOOL cancelled = [NSApp runModalForWindow:httpAuthSheet];
-        //BOOL cancelled = YES;
-        
-//        [NSApp endSheet:httpAuthSheet];
         [httpAuthSheet orderOut:self];
 
         if (cancelled) {
@@ -75,6 +65,10 @@
             [self addAuthToKeychainItem:keychainItem forURL:URL realm:realm forProxy:forProxy];
         }
         
+    }
+
+    if (keychainItem) {
+        CFRelease(keychainItem);
     }
     
     // finally, return username and password
@@ -107,19 +101,24 @@
                                                       &len,
                                                       &passwordData,
                                                       &result);
+    
     if (errSecItemNotFound == status) {
         //NSLog(@"could not find in keychain");
     } else if (status) {
-        NSLog(@"error while trying to find in keychain");
+        //NSLog(@"error while trying to find in keychain");
     } else {
         NSData *data = [NSData dataWithBytes:passwordData length:len];
         (*passwordString) = [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease];
+    }
+    
+    if (passwordData) {
+        SecKeychainItemFreeContent(NULL, passwordData);
     }
     return result;
 }
 
 
-- (NSString *)accountNameFromKeychainItem:(SecKeychainItemRef)item; {
+- (NSString *)accountNameFromKeychainItem:(SecKeychainItemRef)item {
     OSStatus err = 0;
     UInt32 infoTag = kSecAccountItemAttr;
     UInt32 infoFmt = 0; // string
@@ -148,7 +147,8 @@
 
 leave:
     if (authAttrList) {
-        SecKeychainItemFreeContent(authAttrList, data);
+        SecKeychainItemFreeAttributesAndData(authAttrList, data);
+//        SecKeychainItemFreeContent(authAttrList, data);
     }
     
     return result;
