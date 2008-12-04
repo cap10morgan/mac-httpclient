@@ -49,12 +49,13 @@ static CFHTTPMessageRef createHTTPMessageRef(HTTPServiceCFNetworkImpl *self, NSU
 }
 
 
-static CFHTTPMessageRef createResponseBySendingHTTPRequest(HTTPServiceCFNetworkImpl *self, CFHTTPMessageRef req) {
+static CFHTTPMessageRef createResponseBySendingHTTPRequest(HTTPServiceCFNetworkImpl *self, CFHTTPMessageRef req, BOOL followRedirects) {
     CFHTTPMessageRef response = NULL;
     NSMutableData *responseBodyData = [NSMutableData data];
     
     CFReadStreamRef stream = CFReadStreamCreateForHTTPRequest(kCFAllocatorDefault, req);
-    CFReadStreamSetProperty(stream, kCFStreamPropertyHTTPShouldAutoredirect, kCFBooleanTrue);
+    CFBooleanRef autoredirect = followRedirects ? kCFBooleanTrue : kCFBooleanFalse;
+    CFReadStreamSetProperty(stream, kCFStreamPropertyHTTPShouldAutoredirect, autoredirect);
     CFReadStreamOpen(stream);    
     
     BOOL done = NO;
@@ -102,7 +103,7 @@ static BOOL isAuthChallengeStatusCode(NSInteger statusCode) {
 }
 
 
-static NSString *makeHTTPRequest(HTTPServiceCFNetworkImpl *self, id delegate, NSURL *URL, NSString *method, NSString *body, NSArray *headers) {
+static NSString *makeHTTPRequest(HTTPServiceCFNetworkImpl *self, id delegate, NSURL *URL, NSString *method, NSString *body, NSArray *headers, BOOL followRedirects) {
     NSString *result = nil;
     CFHTTPMessageRef request = createHTTPMessageRef(self, URL, method, body, headers);
     CFHTTPMessageRef response = NULL;
@@ -111,7 +112,7 @@ static NSString *makeHTTPRequest(HTTPServiceCFNetworkImpl *self, id delegate, NS
     
     do {
         //    send request
-        response = createResponseBySendingHTTPRequest(self, request);
+        response = createResponseBySendingHTTPRequest(self, request, followRedirects);
         
         if (!response) {
             result = nil;
@@ -254,8 +255,9 @@ leave:
     NSString *method = [command objectForKey:@"method"];
     NSString *body = [command objectForKey:@"body"];
     NSArray *headers = [command objectForKey:@"headers"];
+    BOOL followRedirects = [[command objectForKey:@"followRedirects"] boolValue];
     
-    NSString *rawResponse = makeHTTPRequest(self, delegate, URL, method, body, headers);
+    NSString *rawResponse = makeHTTPRequest(self, delegate, URL, method, body, headers, followRedirects);
     
     if (!rawResponse.length) {
         NSLog(@"(( Zero-length response returned from server. ))");

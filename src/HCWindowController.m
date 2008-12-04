@@ -9,6 +9,7 @@
 #import "HCWindowController+HTTPAuth.h"
 #import "HCPreferencesWindowController.h"
 #import "HTTPService.h"
+#import "TDSourceCodeTextView.h"
 
 @interface HCWindowController ()
 - (void)setupFonts;
@@ -117,6 +118,7 @@
 - (IBAction)clear:(id)sender {
     [command setObject:@"" forKey:@"rawRequest"];
     [command setObject:@"" forKey:@"rawResponse"];
+    [responseTextView renderGutter];
 }
 
 
@@ -216,11 +218,13 @@
 
 - (void)HTTPService:(id <HTTPService>)service didRecieveResponse:(NSString *)rawResponse forRequest:(id)cmd {
     self.command = cmd;
+    [responseTextView renderGutter];
     self.busy = NO;
 }
 
 
 - (void)HTTPService:(id <HTTPService>)service request:(id)cmd didFail:(NSString *)msg {
+    [responseTextView renderGutter];
     NSBeep();
     self.busy = NO;
 }
@@ -296,6 +300,7 @@
         [command addObserver:self forKeyPath:@"URLString" options:NSKeyValueObservingOptionNew context:NULL];
         [command addObserver:self forKeyPath:@"body" options:NSKeyValueObservingOptionNew context:NULL];
         [command addObserver:self forKeyPath:@"method" options:NSKeyValueObservingOptionNew context:NULL];
+        [command addObserver:self forKeyPath:@"followRedirects" options:NSKeyValueObservingOptionNew context:NULL];
     }
 }
 

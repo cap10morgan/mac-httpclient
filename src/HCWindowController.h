@@ -8,6 +8,7 @@
 #import <Cocoa/Cocoa.h>
 
 @protocol HTTPService;
+@class TDSourceCodeTextView;
 
 @interface HCWindowController : NSWindowController {
     IBOutlet NSComboBox *URLComboBox;
@@ -15,7 +16,7 @@
     IBOutlet NSTextView *bodyTextView;
     IBOutlet NSTabView *tabView;
     IBOutlet NSTextView *requestTextView;
-    IBOutlet NSTextView *responseTextView;
+    IBOutlet TDSourceCodeTextView *responseTextView;
     IBOutlet NSScrollView *requestScrollView;
     IBOutlet NSScrollView *responseScrollView;
     IBOutlet NSArrayController *headersController;
