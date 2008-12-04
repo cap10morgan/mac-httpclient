@@ -10,9 +10,10 @@
 #import <CoreServices/CoreServices.h>
 
 @interface HCWindowController (HTTPAuthPrivate)
-- (SecKeychainItemRef)keychainItemForURL:(NSURL *)URL getPasswordString:(NSString **)passwordString;
+- (SecKeychainItemRef)keychainItemForURL:(NSURL *)URL getPasswordString:(NSString **)passwordString forProxy:(BOOL)forProxy;
 - (NSString *)accountNameFromKeychainItem:(SecKeychainItemRef)item;
 - (void)addAuthToKeychainItem:(SecKeychainItemRef)keychainItem forURL:(NSURL *)URL realm:(NSString *)realm forProxy:(BOOL)forProxy;
+- (OSType)protocolForURL:(NSURL *)URL isProxy:(BOOL)isProxy;
 @end
 
 @implementation HCWindowController (HTTPAuthPrivate)
@@ -21,11 +22,12 @@
 #pragma mark HTTPServiceDelegate
 
 - (BOOL)getUsername:(NSString **)uname password:(NSString **)passwd forAuthScheme:(NSString *)scheme URL:(NSURL *)URL realm:(NSString *)realm domain:(NSURL *)domain forProxy:(BOOL)forProxy isRetry:(BOOL)isRetry {
+    BOOL cancelled = NO;
     self.authPassword = nil;
     
     // check keychain for auth creds first. use those if they exist
     NSString *passwordString = nil;
-    SecKeychainItemRef keychainItem = [self keychainItemForURL:URL getPasswordString:&passwordString];
+    SecKeychainItemRef keychainItem = [self keychainItemForURL:URL getPasswordString:&passwordString forProxy:forProxy];
 
     if (keychainItem && !isRetry) {
         NSString *accountString = [self accountNameFromKeychainItem:keychainItem];
@@ -51,13 +53,13 @@
         }
 
         [httpAuthSheet makeFirstResponder:authUsernameTextField];
-        BOOL cancelled = [NSApp runModalForWindow:httpAuthSheet];
+        cancelled = [NSApp runModalForWindow:httpAuthSheet];
         [httpAuthSheet orderOut:self];
 
         if (cancelled) {
-            (*uname) = nil;
-            (*passwd) = nil;
-            return YES;
+            self.authUsername = nil;
+            self.authPassword = nil;
+            goto leave;
         }
         
         // add auth creds to keychain if requested
@@ -66,7 +68,8 @@
         }
         
     }
-
+    
+leave:
     if (keychainItem) {
         CFRelease(keychainItem);
     }
@@ -75,15 +78,16 @@
     (*uname)  = (authUsername) ? [[authUsername copy] autorelease] : @"";
     (*passwd) = (authPassword) ? [[authPassword copy] autorelease] : @"";
     
-    return NO;
+    return cancelled;
 }
 
 
-- (SecKeychainItemRef)keychainItemForURL:(NSURL *)URL getPasswordString:(NSString **)passwordString {
+- (SecKeychainItemRef)keychainItemForURL:(NSURL *)URL getPasswordString:(NSString **)passwordString forProxy:(BOOL)forProxy {
     SecKeychainItemRef result = NULL;
     
     NSString *host = URL.host;
     UInt16 port = URL.port.integerValue;
+    OSType protocol = [self protocolForURL:URL isProxy:forProxy];
     void *passwordData;
     UInt32 len;
     OSStatus status = SecKeychainFindInternetPassword(NULL,
@@ -96,7 +100,7 @@
                                                       0, //path.length,
                                                       NULL, //path.UTF8String,
                                                       port,
-                                                      kSecProtocolTypeHTTP,
+                                                      protocol,
                                                       kSecAuthenticationTypeDefault,
                                                       &len,
                                                       &passwordData,
@@ -157,7 +161,6 @@ leave:
 
 - (void)addAuthToKeychainItem:(SecKeychainItemRef)keychainItemRef forURL:(NSURL *)URL realm:(NSString *)realm forProxy:(BOOL)forProxy {
     OSStatus status = 0;
-    NSString *scheme = URL.scheme;
     NSString *host = URL.host;
     NSInteger port = URL.port.integerValue;
     //NSString *path = URL.path;
@@ -168,13 +171,7 @@ leave:
     NSData *passwordData = [authPassword dataUsingEncoding:NSUTF8StringEncoding];
     
     if (!keychainItemRef) {                
-        OSType protocol;
-        BOOL isHTTPS = [scheme hasPrefix:@"https://"];
-        if (forProxy) {
-            protocol = (isHTTPS) ? kSecProtocolTypeHTTPSProxy : kSecProtocolTypeHTTPProxy;
-        } else {
-            protocol = (isHTTPS) ? kSecProtocolTypeHTTPS : kSecProtocolTypeHTTP;
-        }
+        OSType protocol = [self protocolForURL:URL isProxy:forProxy];
         OSType authType = kSecAuthenticationTypeDefault;
         
         // set up attribute vector (each attribute consists of {tag, length, pointer})
@@ -198,7 +195,9 @@ leave:
                                                   NULL,
                                                   (SecAccessRef)NULL, //access,
                                                   &keychainItemRef);
-        //NSLog((status) ? @"creation failed" : @"creation succeeded");
+        if (!status) {
+            NSLog(@"keychain item creation failed");
+        }
     } else {
         SecKeychainAttribute attrs[] = {
             { kSecAccountItemAttr, authUsername.length, (char *)authUsername.UTF8String }
@@ -211,6 +210,23 @@ leave:
         }        
     }
 }
+
+
+- (OSType)protocolForURL:(NSURL *)URL isProxy:(BOOL)isProxy {
+    OSType protocol;
+
+    BOOL isHTTPS = [[URL scheme] hasPrefix:@"https://"];
+    
+    if (isProxy) {
+        protocol = (isHTTPS) ? kSecProtocolTypeHTTPSProxy : kSecProtocolTypeHTTPProxy;
+    } else {
+        protocol = (isHTTPS) ? kSecProtocolTypeHTTPS : kSecProtocolTypeHTTP;
+    }
+
+    return protocol;
+}
+
+
 
 @end
 
