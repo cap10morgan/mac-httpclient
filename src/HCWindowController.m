@@ -20,6 +20,7 @@
 - (BOOL)isNameRequiringTodaysDateString:(NSString *)name;
 - (NSString *)todaysDateString;
 - (void)changeSizeForBody;
+- (void)renderGutters;
 @end
 
 @implementation HCWindowController
@@ -118,13 +119,17 @@
 - (IBAction)clear:(id)sender {
     [command setObject:@"" forKey:@"rawRequest"];
     [command setObject:@"" forKey:@"rawResponse"];
-    [responseTextView renderGutter];
+    [self renderGutters];
 }
 
 
-- (IBAction)completeAuth:(id)sender {
-    //[NSApp endSheet:httpAuthSheet returnCode:[sender tag]];
-    [NSApp stopModalWithCode:[sender tag]];
+- (IBAction)showRequest:(id)sender {
+    [tabView selectTabViewItemAtIndex:0];
+}
+
+
+- (IBAction)showResponse:(id)sender {
+    [tabView selectTabViewItemAtIndex:1];
 }
 
 
@@ -213,18 +218,24 @@
 }
 
 
+- (void)renderGutters {
+    [requestTextView renderGutter];
+    [responseTextView renderGutter];
+}
+
+
 #pragma mark -
 #pragma mark HTTPServiceDelegate
 
 - (void)HTTPService:(id <HTTPService>)service didRecieveResponse:(NSString *)rawResponse forRequest:(id)cmd {
     self.command = cmd;
-    [responseTextView renderGutter];
+    [self renderGutters];
     self.busy = NO;
 }
 
 
 - (void)HTTPService:(id <HTTPService>)service request:(id)cmd didFail:(NSString *)msg {
-    [responseTextView renderGutter];
+    [self renderGutters];
     NSBeep();
     self.busy = NO;
 }
@@ -277,6 +288,14 @@
     } else {
         return [headerNames count];
     }
+}
+
+
+#pragma mark -
+#pragma mark NSTabViewDelegate
+
+- (void)tabView:(NSTabView *)tabView didSelectTabViewItem:(NSTabViewItem *)tabViewItem {
+    [self renderGutters];
 }
 
 

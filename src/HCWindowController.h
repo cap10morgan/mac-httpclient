@@ -15,7 +15,7 @@
     IBOutlet NSTableView *headersTable;
     IBOutlet NSTextView *bodyTextView;
     IBOutlet NSTabView *tabView;
-    IBOutlet NSTextView *requestTextView;
+    IBOutlet TDSourceCodeTextView *requestTextView;
     IBOutlet TDSourceCodeTextView *responseTextView;
     IBOutlet NSScrollView *requestScrollView;
     IBOutlet NSScrollView *responseScrollView;
@@ -43,6 +43,8 @@
 - (IBAction)openLocation:(id)sender;
 - (IBAction)execute:(id)sender;
 - (IBAction)clear:(id)sender;
+- (IBAction)showRequest:(id)sender;
+- (IBAction)showResponse:(id)sender;
 
 @property (nonatomic, retain) id <HTTPService>service;
 @property (nonatomic, retain) NSArrayController *headersController;
