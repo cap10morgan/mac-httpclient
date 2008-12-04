@@ -41,6 +41,7 @@
 
 
 - (void)renderGutter {
+    if (![[self window] isVisible]) return;
 	NSArray *rects = nil;
 	NSUInteger start = 0;
 	[self getRectsOfVisibleLines:&rects startingLineNumber:&start];
