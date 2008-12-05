@@ -44,7 +44,6 @@
         self.authPassword = passwordString;
     } else {
         // ok, no auth was found in the keychain, show auth sheet
-        
         NSString *fmt = (isRetry) ? 
         NSLocalizedString(@"The name or password entered for area \"%@\" on %@ was incorrect. Please try again.", @"") : 
         NSLocalizedString(@"To access this page, you must log in to \"%@\" on %@.", @"");
@@ -67,17 +66,14 @@
         if (cancelled) {
             self.authUsername = nil;
             self.authPassword = nil;
-            goto leave;
+        } else {
+            // add auth creds to keychain if requested
+            if (self.rememberAuthPassword) {
+                [self addAuthToKeychainItem:keychainItem forURL:URL realm:realm forProxy:forProxy];
+            }
         }
-        
-        // add auth creds to keychain if requested
-        if (self.rememberAuthPassword) {
-            [self addAuthToKeychainItem:keychainItem forURL:URL realm:realm forProxy:forProxy];
-        }
-        
     }
     
-leave:
     if (keychainItem) {
         CFRelease(keychainItem);
     }
@@ -144,10 +140,9 @@ leave:
     info.format = &infoFmt;
     
     err = SecKeychainItemCopyAttributesAndData(item, &info, NULL, &authAttrList, &dataLen, &data);
-    if (err) { 
+    if (err) {
         goto leave; 
     }
-    
     if (!authAttrList->count || authAttrList->attr->tag != kSecAccountItemAttr) { 
         goto leave; 
     }
@@ -160,7 +155,6 @@ leave:
 leave:
     if (authAttrList) {
         SecKeychainItemFreeAttributesAndData(authAttrList, data);
-//        SecKeychainItemFreeContent(authAttrList, data);
     }
     
     return result;
