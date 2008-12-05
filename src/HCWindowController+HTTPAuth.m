@@ -155,6 +155,7 @@
 leave:
     if (authAttrList) {
         SecKeychainItemFreeAttributesAndData(authAttrList, data);
+//        SecKeychainItemFreeContent(authAttrList, data);
     }
     
     return result;
