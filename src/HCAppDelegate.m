@@ -8,11 +8,17 @@
 #import "HCAppDelegate.h"
 #import "HCPreferencesWindowController.h"
 
+NSString *HCPlaySuccessFailureSoundsKey = @"HCPlaySuccessFailureSounds";
+NSString *HCWrapRequestResponseTextKey = @"HCWrapRequestResponseText";
+NSString *HCSyntaxHighlightRequestResponseTextKey = @"HCSyntaxHighlightRequestResponseText";
+
+NSString *HCWrapRequestResponseTextChangedNotification = @"HCWrapRequestResponseTextChangedNotification";
+
 @implementation HCAppDelegate
 
 + (void)initialize {
     NSString *path = [[NSBundle mainBundle] pathForResource:@"DefaultValues" ofType:@"plist"];
-    NSMutableDictionary *defaultValues = [NSMutableDictionary dictionaryWithContentsOfFile:path];
+    id defaultValues = [NSDictionary dictionaryWithContentsOfFile:path];
     
     [[NSUserDefaultsController sharedUserDefaultsController] setInitialValues:defaultValues];
     [[NSUserDefaults standardUserDefaults] registerDefaults:defaultValues];
@@ -48,7 +54,7 @@
 
 
 - (void)windowWillClose:(NSNotification *)n {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowWillCloseNotification object:[n object]];
     [[preferencesWindowController retain] autorelease];
     self.preferencesWindowController = nil;
 }

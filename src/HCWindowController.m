@@ -7,11 +7,13 @@
 
 #import "HCWindowController.h"
 #import "HCWindowController+HTTPAuth.h"
+#import "HCAppDelegate.h"
 #import "HCPreferencesWindowController.h"
 #import "HTTPService.h"
 #import "TDSourceCodeTextView.h"
 
 @interface HCWindowController ()
+- (void)wrapTextChanged:(NSNotification *)n;
 - (void)setupFonts;
 - (void)setupHeadersTable;
 - (void)setupBodyTextView;
@@ -40,12 +42,18 @@
         
         path = [[NSBundle mainBundle] pathForResource:@"HeaderValues" ofType:@"plist"];
         self.headerValues = [NSDictionary dictionaryWithContentsOfFile:path];
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(wrapTextChanged:)
+                                                     name:HCWrapRequestResponseTextChangedNotification 
+                                                   object:nil];
     }
     return self;
 }
 
 
 - (void)dealloc {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
     self.service = nil;
     self.headersController = nil;
     self.recentURLStrings = nil;
@@ -135,6 +143,11 @@
 
 #pragma mark -
 #pragma mark Private
+
+- (void)wrapTextChanged:(NSNotification *)n {
+    
+}
+
 
 - (void)setupFonts {
     NSFont *monaco = [NSFont fontWithName:@"Monaco" size:10.];

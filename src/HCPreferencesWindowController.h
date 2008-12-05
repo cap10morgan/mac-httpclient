@@ -10,5 +10,5 @@
 @interface HCPreferencesWindowController : NSWindowController {
 
 }
-
+- (void)wrapTextChanged:(id)sender;
 @end

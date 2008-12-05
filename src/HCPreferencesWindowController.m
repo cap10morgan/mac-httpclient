@@ -6,6 +6,7 @@
 //
 
 #import "HCPreferencesWindowController.h"
+#import "HCAppDelegate.h"
 
 @implementation HCPreferencesWindowController
 
@@ -21,6 +22,17 @@
 - (void)dealloc {
     
     [super dealloc];
+}
+
+
+- (void)showWindow:(id)sender {
+    [super showWindow:sender];
+    [[self window] center];
+}
+
+
+- (void)wrapTextChanged:(id)sender {
+    [[NSNotificationCenter defaultCenter] postNotificationName:HCWrapRequestResponseTextChangedNotification object:nil];
 }
 
 @end

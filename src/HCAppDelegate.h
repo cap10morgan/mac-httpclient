@@ -7,6 +7,12 @@
 
 #import <Cocoa/Cocoa.h>
 
+extern NSString *HCPlaySuccessFailureSoundsKey;
+extern NSString *HCWrapRequestResponseTextKey;
+extern NSString *HCSyntaxHighlightRequestResponseTextKey;
+
+extern NSString *HCWrapRequestResponseTextChangedNotification;
+
 @class HCPreferencesWindowController;
 
 @interface HCAppDelegate : NSDocumentController {
