@@ -9,6 +9,14 @@
 #import <Security/Security.h>
 #import <CoreServices/CoreServices.h>
 
+@implementation HCWindowController (HTTPAuth)
+
+- (IBAction)completeAuth:(id)sender {
+    [NSApp stopModalWithCode:[sender tag]];
+}
+
+@end
+
 @interface HCWindowController (HTTPAuthPrivate)
 - (SecKeychainItemRef)keychainItemForURL:(NSURL *)URL getPasswordString:(NSString **)passwordString forProxy:(BOOL)forProxy;
 - (NSString *)accountNameFromKeychainItem:(SecKeychainItemRef)item;
@@ -224,16 +232,6 @@ leave:
     }
 
     return protocol;
-}
-
-
-
-@end
-
-@implementation HCWindowController (HTTPAuth)
-
-- (IBAction)completeAuth:(id)sender {
-    [NSApp stopModalWithCode:[sender tag]];
 }
 
 @end
