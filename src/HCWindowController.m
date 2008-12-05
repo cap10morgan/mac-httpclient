@@ -11,12 +11,14 @@
 #import "HCPreferencesWindowController.h"
 #import "HTTPService.h"
 #import "TDSourceCodeTextView.h"
+#import "TDHtmlSyntaxHighlighter.h"
 
 @interface HCWindowController ()
 - (BOOL)shouldPlaySounds;
 - (void)playSuccessSound;
 - (void)playErrorSound;
 - (void)wrapTextChanged:(NSNotification *)n;
+- (void)syntaxHighlightTextChanged:(NSNotification *)n;
 - (void)setupFonts;
 - (void)setupHeadersTable;
 - (void)setupBodyTextView;
@@ -27,6 +29,8 @@
 - (void)changeSizeForBody;
 - (void)renderGutters;
 - (void)updateTextWrapInTextView:(NSTextView *)textView withinScrollView:(NSScrollView *)scrollView;
+- (NSAttributedString *)attributedStringForString:(NSString *)s;
+- (void)updateSoureCodeViews;
 @end
 
 @implementation HCWindowController
@@ -47,9 +51,15 @@
         path = [[NSBundle mainBundle] pathForResource:@"HeaderValues" ofType:@"plist"];
         self.headerValues = [NSDictionary dictionaryWithContentsOfFile:path];
         
+        self.syntaxHighlighter = [[[TDHtmlSyntaxHighlighter alloc] initWithAttributesForDarkBackground:YES] autorelease];
+        
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(wrapTextChanged:)
                                                      name:HCWrapRequestResponseTextChangedNotification 
+                                                   object:nil];
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(syntaxHighlightTextChanged:)
+                                                     name:HCSyntaxHighlightRequestResponseTextChangedNotification 
                                                    object:nil];
     }
     return self;
@@ -62,8 +72,11 @@
     self.headersController = nil;
     self.recentURLStrings = nil;
     self.command = nil;
+    self.highlightedRawRequest = nil;
+    self.highlightedRawResponse = nil;
     self.headerNames = nil;
     self.headerValues = nil;
+    self.syntaxHighlighter = nil;
     self.authUsername = nil;
     self.authPassword = nil;
     self.authMessage = nil;
@@ -75,6 +88,7 @@
     [self setupFonts];
     [self setupHeadersTable];
     [self setupBodyTextView];
+    [self updateSoureCodeViews];
     
     [headersController addObserver:self
                         forKeyPath:@"arrangedObjects"
@@ -171,6 +185,11 @@
     [self updateTextWrapInTextView:requestTextView withinScrollView:requestScrollView];
     [self updateTextWrapInTextView:responseTextView withinScrollView:responseScrollView];
     [self renderGutters];
+}
+
+
+- (void)syntaxHighlightTextChanged:(NSNotification *)n {
+    [self updateSoureCodeViews];
 }
 
 
@@ -287,11 +306,55 @@
 }
 
 
+- (BOOL)syntaxHighlightIsOn {
+    return [[NSUserDefaults standardUserDefaults] boolForKey:HCSyntaxHighlightRequestResponseTextKey];
+}
+
+
+- (NSAttributedString *)attributedStringForString:(NSString *)s {
+    if ([self syntaxHighlightIsOn]) {
+        return [syntaxHighlighter attributedStringForString:s];
+    } else {
+        id attrs = [NSDictionary dictionaryWithObjectsAndKeys:
+                    [NSColor blackColor], NSForegroundColorAttributeName,
+                    [NSFont fontWithName:@"Monaco" size:11.], NSFontAttributeName,
+                    nil];
+        return [[[NSAttributedString alloc] initWithString:s attributes:attrs] autorelease];
+    }
+}
+
+
+- (void)updateSoureCodeViews {
+    if (command) {
+        NSString *rawRequest = [command objectForKey:@"rawRequest"];
+        NSString *rawResponse = [command objectForKey:@"rawResponse"];
+        if (rawRequest.length) {
+            self.highlightedRawRequest = [self attributedStringForString:rawRequest];
+        }
+        if (rawResponse.length) {
+            self.highlightedRawResponse = [self attributedStringForString:rawResponse];
+        }
+    }
+
+    NSColor *bgColor = [self syntaxHighlightIsOn] ? [NSColor colorWithDeviceRed:30./255. green:30./255. blue:36./255. alpha:1.] : [NSColor whiteColor];
+    NSColor *ipColor = [self syntaxHighlightIsOn] ? [NSColor whiteColor] : [NSColor blackColor];
+    
+    [requestTextView setBackgroundColor:bgColor];
+    [responseTextView setBackgroundColor:bgColor];
+    [requestTextView setInsertionPointColor:ipColor];
+    [responseTextView setInsertionPointColor:ipColor];
+}
+
 #pragma mark -
 #pragma mark HTTPServiceDelegate
 
 - (void)HTTPService:(id <HTTPService>)service didRecieveResponse:(NSString *)rawResponse forRequest:(id)cmd {
+    if ([[command objectForKey:@"followRedirects"] boolValue]) {
+        [URLComboBox setStringValue:[cmd objectForKey:@"finalURLString"]];
+    }
+    
     self.command = cmd;
+    [self updateSoureCodeViews];
     [self renderGutters];
     [self playSuccessSound];
     self.busy = NO;
@@ -391,10 +454,13 @@
 @synthesize headersController;
 @synthesize recentURLStrings;
 @synthesize command;
+@synthesize highlightedRawRequest;
+@synthesize highlightedRawResponse;
 @synthesize busy;
 @synthesize bodyShown;
 @synthesize headerNames;
 @synthesize headerValues;
+@synthesize syntaxHighlighter;
 @synthesize authUsername;
 @synthesize authPassword;
 @synthesize authMessage;

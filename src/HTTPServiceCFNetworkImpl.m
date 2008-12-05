@@ -103,7 +103,7 @@ static BOOL isAuthChallengeStatusCode(NSInteger statusCode) {
 }
 
 
-static NSString *makeHTTPRequest(HTTPServiceCFNetworkImpl *self, id delegate, NSURL *URL, NSString *method, NSString *body, NSArray *headers, BOOL followRedirects) {
+static NSString *makeHTTPRequest(HTTPServiceCFNetworkImpl *self, id delegate, NSURL *URL, NSString *method, NSString *body, NSArray *headers, BOOL followRedirects, NSString **outFinalURLString) {
     NSString *result = nil;
     CFHTTPMessageRef request = createHTTPMessageRef(self, URL, method, body, headers);
     CFHTTPMessageRef response = NULL;
@@ -119,6 +119,8 @@ static NSString *makeHTTPRequest(HTTPServiceCFNetworkImpl *self, id delegate, NS
             goto leave;
         }
         
+        NSURL *finalURL = (NSURL *)CFHTTPMessageCopyRequestURL(response);
+        (*outFinalURLString) = [finalURL absoluteString];
         NSInteger responseStatusCode = CFHTTPMessageGetResponseStatusCode(response);
         
         if (!isAuthChallengeStatusCode(responseStatusCode)) {
@@ -257,7 +259,12 @@ leave:
     NSArray *headers = [command objectForKey:@"headers"];
     BOOL followRedirects = [[command objectForKey:@"followRedirects"] boolValue];
     
-    NSString *rawResponse = makeHTTPRequest(self, delegate, URL, method, body, headers, followRedirects);
+    NSString *finalURLString = nil;
+    NSString *rawResponse = makeHTTPRequest(self, delegate, URL, method, body, headers, followRedirects, &finalURLString);
+    
+    if (finalURLString.length) {
+        [command setObject:finalURLString forKey:@"finalURLString"];
+    }
     
     if (!rawResponse.length) {
         NSLog(@"(( Zero-length response returned from server. ))");

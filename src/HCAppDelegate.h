@@ -12,13 +12,9 @@ extern NSString *HCWrapRequestResponseTextKey;
 extern NSString *HCSyntaxHighlightRequestResponseTextKey;
 
 extern NSString *HCWrapRequestResponseTextChangedNotification;
-
-@class HCPreferencesWindowController;
+extern NSString *HCSyntaxHighlightRequestResponseTextChangedNotification;
 
 @interface HCAppDelegate : NSDocumentController {
-    HCPreferencesWindowController *preferencesWindowController;
 }
 - (IBAction)showPreferences:(id)sender;
-
-@property (nonatomic, retain) HCPreferencesWindowController *preferencesWindowController;
 @end

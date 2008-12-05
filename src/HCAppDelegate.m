@@ -13,6 +13,7 @@ NSString *HCWrapRequestResponseTextKey = @"HCWrapRequestResponseText";
 NSString *HCSyntaxHighlightRequestResponseTextKey = @"HCSyntaxHighlightRequestResponseText";
 
 NSString *HCWrapRequestResponseTextChangedNotification = @"HCWrapRequestResponseTextChangedNotification";
+NSString *HCSyntaxHighlightRequestResponseTextChangedNotification = @"HCSyntaxHighlightRequestResponseTextChangedNotification";
 
 @implementation HCAppDelegate
 
@@ -26,8 +27,6 @@ NSString *HCWrapRequestResponseTextChangedNotification = @"HCWrapRequestResponse
 
 
 - (void)dealloc {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-    self.preferencesWindowController = nil;
     [super dealloc];
 }
 
@@ -35,29 +34,16 @@ NSString *HCWrapRequestResponseTextChangedNotification = @"HCWrapRequestResponse
 #pragma mark -
 #pragma mark NSApplicationDelegate
 
-- (void)applicationDidFinishLaunching:(NSNotification *)n {
-    
-}
+//- (void)applicationDidFinishLaunching:(NSNotification *)n {
+//    
+//}
 
 
 #pragma mark -
 #pragma mark Actions
 
 - (IBAction)showPreferences:(id)sender {
-    self.preferencesWindowController = [[[HCPreferencesWindowController alloc] init] autorelease];
-    [preferencesWindowController showWindow:self];
-    [[NSNotificationCenter defaultCenter] addObserver:self 
-                                             selector:@selector(windowWillClose:) 
-                                                 name:NSWindowWillCloseNotification 
-                                               object:[preferencesWindowController window]];
+    [[HCPreferencesWindowController instance] showWindow:self];
 }
 
-
-- (void)windowWillClose:(NSNotification *)n {
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowWillCloseNotification object:[n object]];
-    [[preferencesWindowController retain] autorelease];
-    self.preferencesWindowController = nil;
-}
-
-@synthesize preferencesWindowController;
 @end

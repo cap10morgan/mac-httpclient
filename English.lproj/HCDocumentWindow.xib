@@ -8,7 +8,7 @@
 		<string key="IBDocument.HIToolboxVersion">352.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="5"/>
+			<integer value="100217"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -650,9 +650,15 @@
 																	<int key="NSTCFlags">1</int>
 																</object>
 																<object class="NSTextViewSharedData" key="NSSharedData">
-																	<int key="NSFlags">12129</int>
-																	<reference key="NSBackgroundColor" ref="1047621717"/>
-																	<reference key="NSInsertionColor" ref="505437681"/>
+																	<int key="NSFlags">12133</int>
+																	<object class="NSColor" key="NSBackgroundColor">
+																		<int key="NSColorSpace">1</int>
+																		<bytes key="NSRGB">MC4xMTc2NDcwNiAwLjExNzY0NzA2IDAuMTQxMTc2NDgAA</bytes>
+																	</object>
+																	<object class="NSColor" key="NSInsertionColor" id="609132504">
+																		<int key="NSColorSpace">1</int>
+																		<bytes key="NSRGB">MSAxIDEAA</bytes>
+																	</object>
 																	<object class="NSDictionary" key="NSSelectedAttributes">
 																		<bool key="EncodedWithXMLCoder">YES</bool>
 																		<object class="NSMutableArray" key="dict.sortedKeys">
@@ -823,8 +829,11 @@
 																</object>
 																<object class="NSTextViewSharedData" key="NSSharedData">
 																	<int key="NSFlags">12129</int>
-																	<reference key="NSBackgroundColor" ref="1047621717"/>
-																	<reference key="NSInsertionColor" ref="505437681"/>
+																	<object class="NSColor" key="NSBackgroundColor">
+																		<int key="NSColorSpace">1</int>
+																		<bytes key="NSRGB">MC4xMTc2NDcwNiAwLjExNzY0NzA2IDAuMTQxMTc2NDgAA</bytes>
+																	</object>
+																	<reference key="NSInsertionColor" ref="609132504"/>
 																	<object class="NSDictionary" key="NSSelectedAttributes">
 																		<bool key="EncodedWithXMLCoder">YES</bool>
 																		<object class="NSMutableArray" key="dict.sortedKeys">
@@ -948,7 +957,7 @@
 							<object class="NSButtonCell" key="NSCell" id="459204366">
 								<int key="NSCellFlags">67239424</int>
 								<int key="NSCellFlags2">131072</int>
-								<string key="NSContents">Body</string>
+								<string key="NSContents">Body:</string>
 								<reference key="NSSupport" ref="26"/>
 								<reference key="NSControlView" ref="1049340555"/>
 								<int key="NSButtonFlags">134365439</int>
@@ -2163,22 +2172,6 @@
 					<int key="connectionID">100201</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">value: command.rawResponse</string>
-						<reference key="source" ref="743106138"/>
-						<reference key="destination" ref="512844837"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="743106138"/>
-							<reference key="NSDestination" ref="512844837"/>
-							<string key="NSLabel">value: command.rawResponse</string>
-							<string key="NSBinding">value</string>
-							<string key="NSKeyPath">command.rawResponse</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">100203</int>
-				</object>
-				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">scrollView</string>
 						<reference key="source" ref="743106138"/>
@@ -2287,22 +2280,6 @@
 					<int key="connectionID">100229</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBBindingConnection" key="connection">
-						<string key="label">value: command.rawRequest</string>
-						<reference key="source" ref="946634628"/>
-						<reference key="destination" ref="512844837"/>
-						<object class="NSNibBindingConnector" key="connector">
-							<reference key="NSSource" ref="946634628"/>
-							<reference key="NSDestination" ref="512844837"/>
-							<string key="NSLabel">value: command.rawRequest</string>
-							<string key="NSBinding">value</string>
-							<string key="NSKeyPath">command.rawRequest</string>
-							<int key="NSNibBindingConnectorVersion">2</int>
-						</object>
-					</object>
-					<int key="connectionID">100230</int>
-				</object>
-				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">delegate</string>
 						<reference key="source" ref="857374669"/>
@@ -2325,6 +2302,38 @@
 						<reference key="destination" ref="404824006"/>
 					</object>
 					<int key="connectionID">100234</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">attributedString: highlightedRawRequest</string>
+						<reference key="source" ref="946634628"/>
+						<reference key="destination" ref="512844837"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="946634628"/>
+							<reference key="NSDestination" ref="512844837"/>
+							<string key="NSLabel">attributedString: highlightedRawRequest</string>
+							<string key="NSBinding">attributedString</string>
+							<string key="NSKeyPath">highlightedRawRequest</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">100241</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBBindingConnection" key="connection">
+						<string key="label">attributedString: highlightedRawResponse</string>
+						<reference key="source" ref="743106138"/>
+						<reference key="destination" ref="512844837"/>
+						<object class="NSNibBindingConnector" key="connector">
+							<reference key="NSSource" ref="743106138"/>
+							<reference key="NSDestination" ref="512844837"/>
+							<string key="NSLabel">attributedString: highlightedRawResponse</string>
+							<string key="NSBinding">attributedString</string>
+							<string key="NSKeyPath">highlightedRawResponse</string>
+							<int key="NSNibBindingConnectorVersion">2</int>
+						</object>
+					</object>
+					<int key="connectionID">100242</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -3228,7 +3237,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">100234</int>
+			<int key="maxID">100242</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">

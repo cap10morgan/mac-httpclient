@@ -10,5 +10,7 @@
 @interface HCPreferencesWindowController : NSWindowController {
 
 }
++ (id)instance;
 - (void)wrapTextChanged:(id)sender;
+- (void)syntaxHightlightTextChanged:(id)sender;
 @end

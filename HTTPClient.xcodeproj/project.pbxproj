@@ -28,7 +28,24 @@
 		D357D5630EE63376009D62AE /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D357D5620EE63376009D62AE /* Security.framework */; };
 		D357D8930EE7C0C0009D62AE /* TDGutterView.m in Sources */ = {isa = PBXBuildFile; fileRef = D357D8900EE7C0C0009D62AE /* TDGutterView.m */; };
 		D357D8940EE7C0C0009D62AE /* TDSourceCodeTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = D357D8920EE7C0C0009D62AE /* TDSourceCodeTextView.m */; };
+		D357DA800EE8E08C009D62AE /* TDHtmlSyntaxHighlighter.m in Sources */ = {isa = PBXBuildFile; fileRef = D357DA7F0EE8E08C009D62AE /* TDHtmlSyntaxHighlighter.m */; };
+		D357DA820EE8E11D009D62AE /* TDParseKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D357DA810EE8E11D009D62AE /* TDParseKit.framework */; };
+		D357DACC0EE8E27D009D62AE /* TDParseKit.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = D357DA810EE8E11D009D62AE /* TDParseKit.framework */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		D357DAD10EE8E28A009D62AE /* Copy Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				D357DACC0EE8E27D009D62AE /* TDParseKit.framework in Copy Frameworks */,
+			);
+			name = "Copy Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		089C1660FE840EACC02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
@@ -67,6 +84,9 @@
 		D357D8900EE7C0C0009D62AE /* TDGutterView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TDGutterView.m; path = src/TDGutterView.m; sourceTree = "<group>"; };
 		D357D8910EE7C0C0009D62AE /* TDSourceCodeTextView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TDSourceCodeTextView.h; path = src/TDSourceCodeTextView.h; sourceTree = "<group>"; };
 		D357D8920EE7C0C0009D62AE /* TDSourceCodeTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TDSourceCodeTextView.m; path = src/TDSourceCodeTextView.m; sourceTree = "<group>"; };
+		D357DA7E0EE8E08C009D62AE /* TDHtmlSyntaxHighlighter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TDHtmlSyntaxHighlighter.h; path = src/TDHtmlSyntaxHighlighter.h; sourceTree = "<group>"; };
+		D357DA7F0EE8E08C009D62AE /* TDHtmlSyntaxHighlighter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TDHtmlSyntaxHighlighter.m; path = src/TDHtmlSyntaxHighlighter.m; sourceTree = "<group>"; };
+		D357DA810EE8E11D009D62AE /* TDParseKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TDParseKit.framework; path = frameworks/TDParseKit.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -76,6 +96,7 @@
 			files = (
 				8D15AC340486D014006FF6A4 /* Cocoa.framework in Frameworks */,
 				D357D5630EE63376009D62AE /* Security.framework in Frameworks */,
+				D357DA820EE8E11D009D62AE /* TDParseKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -85,6 +106,7 @@
 		1058C7A6FEA54F5311CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D357DA810EE8E11D009D62AE /* TDParseKit.framework */,
 				D357D5620EE63376009D62AE /* Security.framework */,
 				1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */,
 			);
@@ -183,6 +205,8 @@
 				D357D8900EE7C0C0009D62AE /* TDGutterView.m */,
 				D357D8910EE7C0C0009D62AE /* TDSourceCodeTextView.h */,
 				D357D8920EE7C0C0009D62AE /* TDSourceCodeTextView.m */,
+				D357DA7E0EE8E08C009D62AE /* TDHtmlSyntaxHighlighter.h */,
+				D357DA7F0EE8E08C009D62AE /* TDHtmlSyntaxHighlighter.m */,
 			);
 			name = SouceCodeTextView;
 			sourceTree = "<group>";
@@ -207,6 +231,7 @@
 				8D15AC2B0486D014006FF6A4 /* Resources */,
 				8D15AC300486D014006FF6A4 /* Sources */,
 				8D15AC330486D014006FF6A4 /* Frameworks */,
+				D357DAD10EE8E28A009D62AE /* Copy Frameworks */,
 			);
 			buildRules = (
 			);
@@ -269,6 +294,7 @@
 				D357D53D0EE6300E009D62AE /* HCWindowController+HTTPAuth.m in Sources */,
 				D357D8930EE7C0C0009D62AE /* TDGutterView.m in Sources */,
 				D357D8940EE7C0C0009D62AE /* TDSourceCodeTextView.m in Sources */,
+				D357DA800EE8E08C009D62AE /* TDHtmlSyntaxHighlighter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -323,6 +349,10 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/frameworks\"",
+				);
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = G5;
@@ -340,6 +370,10 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)/frameworks\"",
+				);
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = HTTPClient_Prefix.pch;

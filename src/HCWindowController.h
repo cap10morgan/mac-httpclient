@@ -9,6 +9,7 @@
 
 @protocol HTTPService;
 @class TDSourceCodeTextView;
+@class TDHtmlSyntaxHighlighter;
 
 @interface HCWindowController : NSWindowController {
     IBOutlet NSComboBox *URLComboBox;
@@ -24,11 +25,15 @@
     
     NSMutableArray *recentURLStrings;
     NSMutableDictionary *command;
+    NSAttributedString *highlightedRawRequest;
+    NSAttributedString *highlightedRawResponse;
     BOOL busy;
     BOOL bodyShown;
     
     NSArray *headerNames;
     NSDictionary *headerValues;
+
+    TDHtmlSyntaxHighlighter *syntaxHighlighter;
     
     // HTTPAuth
     IBOutlet NSPanel *httpAuthSheet;
@@ -51,11 +56,16 @@
 @property (nonatomic, retain) NSMutableArray *recentURLStrings;
 
 @property (nonatomic, retain) id command;
+@property (nonatomic, copy) NSAttributedString *highlightedRawRequest;
+@property (nonatomic, copy) NSAttributedString *highlightedRawResponse;
+
 @property (nonatomic, getter=isBusy) BOOL busy;
 @property (nonatomic, getter=isBodyShown) BOOL bodyShown;
 
 @property (nonatomic, retain) NSArray *headerNames;
 @property (nonatomic, retain) NSDictionary *headerValues;
+
+@property (nonatomic, retain) TDHtmlSyntaxHighlighter *syntaxHighlighter;
 
 @property (nonatomic, copy) NSString *authUsername;
 @property (nonatomic, copy) NSString *authPassword;

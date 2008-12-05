@@ -10,6 +10,17 @@
 
 @implementation HCPreferencesWindowController
 
++ (id)instance {
+    static id instance = nil;
+    @synchronized (self) {
+        if (!instance) {
+            instance = [[HCPreferencesWindowController alloc] init];
+        }
+    }
+    return instance;
+}
+
+
 - (id)init {
     self = [super initWithWindowNibName:@"HCPreferencesWindow"];
     if (self) {
@@ -20,7 +31,6 @@
 
 
 - (void)dealloc {
-    
     [super dealloc];
 }
 
@@ -33,6 +43,11 @@
 
 - (void)wrapTextChanged:(id)sender {
     [[NSNotificationCenter defaultCenter] postNotificationName:HCWrapRequestResponseTextChangedNotification object:nil];
+}
+
+
+- (void)syntaxHightlightTextChanged:(id)sender {
+    [[NSNotificationCenter defaultCenter] postNotificationName:HCSyntaxHighlightRequestResponseTextChangedNotification object:nil];
 }
 
 @end
