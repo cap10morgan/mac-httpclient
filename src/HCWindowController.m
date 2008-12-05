@@ -13,6 +13,9 @@
 #import "TDSourceCodeTextView.h"
 
 @interface HCWindowController ()
+- (BOOL)shouldPlaySounds;
+- (void)playSuccessSound;
+- (void)playErrorSound;
 - (void)wrapTextChanged:(NSNotification *)n;
 - (void)setupFonts;
 - (void)setupHeadersTable;
@@ -110,10 +113,10 @@
         [command setObject:URLString forKey:@"URLString"];
     }
     
-    if (NSNotFound == [URLString rangeOfString:@"."].location) {
-        URLString = [NSString stringWithFormat:@"%@.com", URLString];
-        [command setObject:URLString forKey:@"URLString"];
-    }
+//    if (NSNotFound == [URLString rangeOfString:@"."].location) {
+//        URLString = [NSString stringWithFormat:@"%@.com", URLString];
+//        [command setObject:URLString forKey:@"URLString"];
+//    }
     
     [command setObject:[headersController arrangedObjects] forKey:@"headers"];
     [service sendHTTPRequest:command];
@@ -143,6 +146,25 @@
 
 #pragma mark -
 #pragma mark Private
+
+- (BOOL)shouldPlaySounds {
+	return [[[NSUserDefaults standardUserDefaults] objectForKey:HCPlaySuccessFailureSoundsKey] boolValue];
+}
+
+
+- (void)playSuccessSound {
+    if ([self shouldPlaySounds]) {
+        [[NSSound soundNamed:@"Hero"] play];
+    }
+}
+
+
+- (void)playErrorSound {
+    if ([self shouldPlaySounds]) {
+        [[NSSound soundNamed:@"Basso"] play];
+    }
+}
+
 
 - (void)wrapTextChanged:(NSNotification *)n {
     
@@ -243,13 +265,14 @@
 - (void)HTTPService:(id <HTTPService>)service didRecieveResponse:(NSString *)rawResponse forRequest:(id)cmd {
     self.command = cmd;
     [self renderGutters];
+    [self playSuccessSound];
     self.busy = NO;
 }
 
 
 - (void)HTTPService:(id <HTTPService>)service request:(id)cmd didFail:(NSString *)msg {
     [self renderGutters];
-    NSBeep();
+    [self playErrorSound];
     self.busy = NO;
 }
 
