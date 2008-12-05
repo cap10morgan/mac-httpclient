@@ -2256,22 +2256,6 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
-						<string key="label">requestScrollView</string>
-						<reference key="source" ref="512844837"/>
-						<reference key="destination" ref="265174953"/>
-					</object>
-					<int key="connectionID">100224</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
-						<string key="label">responseScrollView</string>
-						<reference key="source" ref="512844837"/>
-						<reference key="destination" ref="404824006"/>
-					</object>
-					<int key="connectionID">100225</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBOutletConnection" key="connection">
 						<string key="label">requestTextView</string>
 						<reference key="source" ref="512844837"/>
 						<reference key="destination" ref="946634628"/>
@@ -2325,6 +2309,22 @@
 						<reference key="destination" ref="512844837"/>
 					</object>
 					<int key="connectionID">100231</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">requestScrollView</string>
+						<reference key="source" ref="512844837"/>
+						<reference key="destination" ref="265174953"/>
+					</object>
+					<int key="connectionID">100233</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">responseScrollView</string>
+						<reference key="source" ref="512844837"/>
+						<reference key="destination" ref="404824006"/>
+					</object>
+					<int key="connectionID">100234</int>
 				</object>
 			</object>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -3228,7 +3228,7 @@
 				</object>
 			</object>
 			<nil key="sourceID"/>
-			<int key="maxID">100231</int>
+			<int key="maxID">100234</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<object class="NSMutableArray" key="referencedPartialClassDescriptions">

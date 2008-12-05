@@ -26,6 +26,7 @@
 - (NSString *)todaysDateString;
 - (void)changeSizeForBody;
 - (void)renderGutters;
+- (void)updateTextWrapInTextView:(NSTextView *)textView withinScrollView:(NSScrollView *)scrollView;
 @end
 
 @implementation HCWindowController
@@ -167,7 +168,9 @@
 
 
 - (void)wrapTextChanged:(NSNotification *)n {
-    
+    [self updateTextWrapInTextView:requestTextView withinScrollView:requestScrollView];
+    [self updateTextWrapInTextView:responseTextView withinScrollView:responseScrollView];
+    [self renderGutters];
 }
 
 
@@ -256,6 +259,31 @@
 - (void)renderGutters {
     [requestTextView renderGutter];
     [responseTextView renderGutter];
+}
+
+
+- (void)updateTextWrapInTextView:(NSTextView *)textView withinScrollView:(NSScrollView *)scrollView {
+	BOOL wrap = [[NSUserDefaults standardUserDefaults] boolForKey:HCWrapRequestResponseTextKey];
+	
+    if (wrap) {
+        NSSize s = [scrollView bounds].size;
+		[scrollView setHasHorizontalScroller:NO];
+		[[textView textContainer] setContainerSize:s];
+        s.width -= 15; // subtract for width of vert scroll gutter? neccesary to prevent annoying slight horz scrolling
+        [textView setFrameSize:s];
+		[[textView textContainer] setWidthTracksTextView:YES];
+		[textView setHorizontallyResizable:NO];
+    } else {
+		[scrollView setHasHorizontalScroller:YES];
+		[textView setHorizontallyResizable:YES];
+		[[textView textContainer] setContainerSize:NSMakeSize(MAXFLOAT, MAXFLOAT)];
+		[[textView textContainer] setWidthTracksTextView:NO];	
+		[textView setMaxSize:NSMakeSize(MAXFLOAT, MAXFLOAT)];
+	}
+
+    NSRange r = NSMakeRange(0, textView.string.length);
+    [[[textView textContainer] layoutManager] invalidateDisplayForCharacterRange:r];
+    [textView setNeedsDisplay:YES];
 }
 
 
