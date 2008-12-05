@@ -110,22 +110,23 @@ static NSString *makeHTTPRequest(HTTPServiceCFNetworkImpl *self, id delegate, NS
     CFHTTPAuthenticationRef auth = NULL;
     NSInteger count = 0;
     
-    do {
+    while (1) {
         //    send request
         response = createResponseBySendingHTTPRequest(self, request, followRedirects);
         
         if (!response) {
             result = nil;
-            goto leave;
+            break;
         }
         
         NSURL *finalURL = (NSURL *)CFHTTPMessageCopyRequestURL(response);
         (*outFinalURLString) = [finalURL absoluteString];
+        [finalURL release];
         NSInteger responseStatusCode = CFHTTPMessageGetResponseStatusCode(response);
         
         if (!isAuthChallengeStatusCode(responseStatusCode)) {
             result = getRawStringForHTTPMessageRef(response);
-            goto leave;
+            break;
         }
         
         if (count) {
@@ -150,18 +151,15 @@ static NSString *makeHTTPRequest(HTTPServiceCFNetworkImpl *self, id delegate, NS
             username = self.authUsername;
             password = self.authPassword;
         } 
-//        else {
-            // get username/password from user
-            cancelled = [delegate getUsername:&username password:&password forAuthScheme:scheme URL:URL realm:realm domain:domain forProxy:forProxy isRetry:count];
-            count++;
-//        }
+        cancelled = [delegate getUsername:&username password:&password forAuthScheme:scheme URL:URL realm:realm domain:domain forProxy:forProxy isRetry:count];
+        count++;
         
         self.authUsername = username;
         self.authPassword = password;
         
         if (cancelled) {
             result = nil;
-            goto leave;
+            break;
         }        
         
         if (request) {
@@ -194,12 +192,10 @@ static NSString *makeHTTPRequest(HTTPServiceCFNetworkImpl *self, id delegate, NS
         if (!credentialsApplied) {
             NSLog(@"OH BOTHER. Can't add add auth credentials to request. dunno why. FAIL.");
             result = nil;
-            goto leave;
+            break;
         }
-        
-    } while (1);
+    }
     
-leave:
     if (request) {
         CFRelease(request);
         request = NULL;
