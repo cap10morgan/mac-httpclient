@@ -312,13 +312,13 @@
 }
 
 
-- (BOOL)syntaxHighlightIsOn {
+- (BOOL)isSyntaxHighlightOn {
     return [[NSUserDefaults standardUserDefaults] boolForKey:HCSyntaxHighlightRequestResponseTextKey];
 }
 
 
 - (NSAttributedString *)attributedStringForString:(NSString *)s {
-    if ([self syntaxHighlightIsOn]) {
+    if ([self isSyntaxHighlightOn]) {
         return [syntaxHighlighter attributedStringForString:s];
     } else {
         id attrs = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -342,8 +342,8 @@
         }
     }
 
-    NSColor *bgColor = [self syntaxHighlightIsOn] ? [NSColor colorWithDeviceRed:30./255. green:30./255. blue:36./255. alpha:1.] : [NSColor whiteColor];
-    NSColor *ipColor = [self syntaxHighlightIsOn] ? [NSColor whiteColor] : [NSColor blackColor];
+    NSColor *bgColor = [self isSyntaxHighlightOn] ? [NSColor colorWithDeviceRed:30./255. green:30./255. blue:36./255. alpha:1.] : [NSColor whiteColor];
+    NSColor *ipColor = [self isSyntaxHighlightOn] ? [NSColor whiteColor] : [NSColor blackColor];
     
     [requestTextView setBackgroundColor:bgColor];
     [responseTextView setBackgroundColor:bgColor];
