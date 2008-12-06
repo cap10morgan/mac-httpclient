@@ -15,73 +15,73 @@
 @implementation TDGutterView
 
 - (void)awakeFromNib {
-	self.attrs = [NSDictionary dictionaryWithObjectsAndKeys:
-				  [NSFont userFixedPitchFontOfSize:11.], NSFontAttributeName,
-				  [NSColor grayColor], NSForegroundColorAttributeName,
-				  nil];	
+    self.attrs = [NSDictionary dictionaryWithObjectsAndKeys:
+                  [NSFont userFixedPitchFontOfSize:11.], NSFontAttributeName,
+                  [NSColor grayColor], NSForegroundColorAttributeName,
+                  nil];    
 }
 
 
 - (void)dealloc {
-	self.sourceScrollView = nil;
-	self.sourceTextView = nil;
-	self.lineNumberRects = nil;
-	self.attrs = nil;
-	[super dealloc];
+    self.sourceScrollView = nil;
+    self.sourceTextView = nil;
+    self.lineNumberRects = nil;
+    self.attrs = nil;
+    [super dealloc];
 }
 
 
 - (BOOL)isFlipped {
-	return YES;
+    return YES;
 }
 
 
 - (NSUInteger)autoresizingMask {
-	return NSViewHeightSizable;
+    return NSViewHeightSizable;
 }
 
 
 - (void)drawRect:(NSRect)rect {
-	NSDrawWindowBackground(rect);
-	
-	CGFloat rectWidth = rect.size.width;
-	NSPoint p1 = NSMakePoint(rectWidth + 1., 0.);
-	NSPoint p2 = NSMakePoint(rectWidth + 1., rect.size.height);
-	[NSBezierPath strokeLineFromPoint:p1 toPoint:p2];
-	
-	if (!lineNumberRects.count) {
-		return;
-	}
-	
-	NSUInteger i = startLineNumber;
-	NSUInteger count = i + lineNumberRects.count;
-	
-	for ( ; i < count; i++) {
-		NSRect r = [[lineNumberRects objectAtIndex:i - startLineNumber] rectValue];
+    NSDrawWindowBackground(rect);
+    
+    CGFloat rectWidth = rect.size.width;
+    NSPoint p1 = NSMakePoint(rectWidth + 1., 0.);
+    NSPoint p2 = NSMakePoint(rectWidth + 1., rect.size.height);
+    [NSBezierPath strokeLineFromPoint:p1 toPoint:p2];
+    
+    if (!lineNumberRects.count) {
+        return;
+    }
+    
+    NSUInteger i = startLineNumber;
+    NSUInteger count = i + lineNumberRects.count;
+    
+    for ( ; i < count; i++) {
+        NSRect r = [[lineNumberRects objectAtIndex:i - startLineNumber] rectValue];
 
-		// set the x origin of the number according to the number of digits it contains
-		CGFloat x = 0.;
-		if (i < 9) {
-			x = rectWidth - 14.;
-		} else if (i < 99) {
-			x = rectWidth - 21.;
-		} else if (i < 999) {
-			x = rectWidth - 28.;
-		} else if (i < 9999) {
-			x = rectWidth - 35.;
-		}
-		r.origin.x = x;
-		
-		// center the number vertically for tall lines
-		if (r.origin.y) {
-			r.origin.y += r.size.height/2. - 7.;
-		}
-		
-		NSString *s = [[NSNumber numberWithInteger:i + 1] stringValue];
-		NSAttributedString *as = [[NSAttributedString alloc] initWithString:s attributes:attrs];
-		[as drawAtPoint:r.origin];
-		[as release];
-	}
+        // set the x origin of the number according to the number of digits it contains
+        CGFloat x = 0.;
+        if (i < 9) {
+            x = rectWidth - 14.;
+        } else if (i < 99) {
+            x = rectWidth - 21.;
+        } else if (i < 999) {
+            x = rectWidth - 28.;
+        } else if (i < 9999) {
+            x = rectWidth - 35.;
+        }
+        r.origin.x = x;
+        
+        // center the number vertically for tall lines
+        if (r.origin.y) {
+            r.origin.y += r.size.height/2. - 7.;
+        }
+        
+        NSString *s = [[NSNumber numberWithInteger:i + 1] stringValue];
+        NSAttributedString *as = [[NSAttributedString alloc] initWithString:s attributes:attrs];
+        [as drawAtPoint:r.origin];
+        [as release];
+    }
 }
 
 @synthesize sourceScrollView;

@@ -163,7 +163,7 @@
 #pragma mark Private
 
 - (BOOL)shouldPlaySounds {
-	return [[[NSUserDefaults standardUserDefaults] objectForKey:HCPlaySuccessFailureSoundsKey] boolValue];
+    return [[[NSUserDefaults standardUserDefaults] objectForKey:HCPlaySuccessFailureSoundsKey] boolValue];
 }
 
 
@@ -282,23 +282,23 @@
 
 
 - (void)updateTextWrapInTextView:(NSTextView *)textView withinScrollView:(NSScrollView *)scrollView {
-	BOOL wrap = [[NSUserDefaults standardUserDefaults] boolForKey:HCWrapRequestResponseTextKey];
-	
+    BOOL wrap = [[NSUserDefaults standardUserDefaults] boolForKey:HCWrapRequestResponseTextKey];
+    
     if (wrap) {
         NSSize s = [scrollView bounds].size;
-		[scrollView setHasHorizontalScroller:NO];
-		[[textView textContainer] setContainerSize:s];
+        [scrollView setHasHorizontalScroller:NO];
+        [[textView textContainer] setContainerSize:s];
         s.width -= 15; // subtract for width of vert scroll gutter? neccesary to prevent annoying slight horz scrolling
         [textView setFrameSize:s];
-		[[textView textContainer] setWidthTracksTextView:YES];
-		[textView setHorizontallyResizable:NO];
+        [[textView textContainer] setWidthTracksTextView:YES];
+        [textView setHorizontallyResizable:NO];
     } else {
-		[scrollView setHasHorizontalScroller:YES];
-		[textView setHorizontallyResizable:YES];
-		[[textView textContainer] setContainerSize:NSMakeSize(MAXFLOAT, MAXFLOAT)];
-		[[textView textContainer] setWidthTracksTextView:NO];	
-		[textView setMaxSize:NSMakeSize(MAXFLOAT, MAXFLOAT)];
-	}
+        [scrollView setHasHorizontalScroller:YES];
+        [textView setHorizontallyResizable:YES];
+        [[textView textContainer] setContainerSize:NSMakeSize(MAXFLOAT, MAXFLOAT)];
+        [[textView textContainer] setWidthTracksTextView:NO];    
+        [textView setMaxSize:NSMakeSize(MAXFLOAT, MAXFLOAT)];
+    }
 
     NSRange r = NSMakeRange(0, textView.string.length);
     [[[textView textContainer] layoutManager] invalidateDisplayForCharacterRange:r];
@@ -357,6 +357,7 @@
     [self updateSoureCodeViews];
     [self renderGutters];
     [self playSuccessSound];
+    [[self window] makeFirstResponder:URLComboBox];
     self.busy = NO;
 }
 
@@ -364,6 +365,7 @@
 - (void)HTTPService:(id <HTTPService>)service request:(id)cmd didFail:(NSString *)msg {
     [self renderGutters];
     [self playErrorSound];
+    [[self window] makeFirstResponder:URLComboBox];
     self.busy = NO;
 }
 

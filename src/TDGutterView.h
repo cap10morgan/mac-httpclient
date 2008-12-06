@@ -9,13 +9,13 @@
 #import <Cocoa/Cocoa.h>
 
 @interface TDGutterView : NSView {
-	IBOutlet NSScrollView *sourceScrollView;
-	IBOutlet NSTextView *sourceTextView;
+    IBOutlet NSScrollView *sourceScrollView;
+    IBOutlet NSTextView *sourceTextView;
 
-	NSArray *lineNumberRects;
-	NSUInteger startLineNumber;
-	
-	NSDictionary *attrs;
+    NSArray *lineNumberRects;
+    NSUInteger startLineNumber;
+    
+    NSDictionary *attrs;
 }
 @property (retain) NSArray *lineNumberRects;
 @property NSUInteger startLineNumber;

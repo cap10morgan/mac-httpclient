@@ -11,9 +11,9 @@
 @class TDGutterView;
 
 @interface TDSourceCodeTextView : NSTextView {
-	IBOutlet TDGutterView *gutterView;
-	IBOutlet NSScrollView *scrollView;
-	CGFloat sourceTextViewOffset;
+    IBOutlet TDGutterView *gutterView;
+    IBOutlet NSScrollView *scrollView;
+    CGFloat sourceTextViewOffset;
 }
 - (void)renderGutter;
 
