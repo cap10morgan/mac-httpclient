@@ -207,9 +207,6 @@
 
 
 - (void)parseHeaders:(NSString *)s {
-    s = [NSString stringWithFormat:@"%@", s];
-    
-
     NSAttributedString *as = nil;
     NSArray *lines = [s componentsSeparatedByString:@"\r\n"];
     for (NSString *line in lines) {
@@ -231,9 +228,9 @@
             [as release];
         }
     }
-    
-//    [highlightedString appendAttributedString:as];
-//    [as release];
+    as = [[NSAttributedString alloc] initWithString:@"\r\n" attributes:textAttributes];
+    [highlightedString appendAttributedString:as];
+    [as release];
 }
 
 
@@ -243,9 +240,8 @@
     
     NSRange r = [s rangeOfString:@"\r\n\r\n"];
     if (NSNotFound != r.location) {
-        NSInteger index = r.location;
-        [self parseHeaders:[s substringToIndex:index]];
-        s = [s substringFromIndex:index];
+        [self parseHeaders:[s substringToIndex:r.location]];
+        s = [s substringFromIndex:r.location + r.length];
     }
     
     tokenizer.string = s;
