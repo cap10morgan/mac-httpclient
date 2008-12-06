@@ -243,6 +243,7 @@
         [self parseHeaders:[s substringToIndex:r.location]];
         s = [s substringFromIndex:r.location + r.length];
     }
+    NSInteger lengthOfHeaders = highlightedString.length;
     
     tokenizer.string = s;
     TDToken *eof = [TDToken EOFToken];
@@ -307,11 +308,11 @@
     }
     
     // handle case where no elements were encountered (plain text basically)
-    if (!highlightedString.length) {
-        TDToken *tok = nil;
-        while (tok = [self pop]) {
-            NSAttributedString *as = [[[NSAttributedString alloc] initWithString:tok.stringValue attributes:textAttributes] autorelease];
+    if (lengthOfHeaders == highlightedString.length && stack.count) {
+        for (TDToken *tok in stack) {
+            NSAttributedString *as = [[NSAttributedString alloc] initWithString:tok.stringValue attributes:textAttributes];
             [highlightedString appendAttributedString:as];
+            [as release];
         }
     }
     
