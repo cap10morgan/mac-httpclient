@@ -224,7 +224,7 @@
 
 
 - (NSComboBoxCell *)comboBoxCellWithTag:(int)tag {
-    NSComboBoxCell *cbCell = [[NSComboBoxCell alloc] init];
+    NSComboBoxCell *cbCell = [[[NSComboBoxCell alloc] init] autorelease];
     [cbCell setEditable:YES];
     [cbCell setFocusRingType:NSFocusRingTypeNone];
     [cbCell setControlSize:NSSmallControlSize];
