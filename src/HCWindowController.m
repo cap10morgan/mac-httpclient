@@ -95,8 +95,6 @@
                         forKeyPath:@"arrangedObjects"
                            options:NSKeyValueObservingOptionOld
                            context:NULL];
-    
-    
 }
 
 
@@ -383,7 +381,7 @@
     [self renderGutters];
     [self playSuccessSound];
     self.busy = NO;
-    [[self window] makeFirstResponder:URLComboBox];
+    [self openLocation:self]; // focus the url bar
 }
 
 
@@ -391,7 +389,7 @@
     [self renderGutters];
     [self playErrorSound];
     self.busy = NO;
-    [[self window] makeFirstResponder:URLComboBox];
+    [self openLocation:self]; // focus the url bar
 }
 
 
