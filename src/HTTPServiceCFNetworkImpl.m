@@ -65,7 +65,7 @@ static CFHTTPMessageRef createResponseBySendingHTTPRequest(HTTPServiceCFNetworkI
         if (numBytesRead < 0) {
             CFStreamError error = CFReadStreamGetError(stream);
             NSString *msg = [NSString stringWithFormat:@"Network Error. Domain: %d, Code: %d", error.domain, error.error];
-            NSLog(msg);
+            NSLog(@"%@", msg);
             [self failure:msg];
             responseBodyData = nil;
             done = YES;
