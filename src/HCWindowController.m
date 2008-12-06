@@ -358,16 +358,16 @@
     [self updateSoureCodeViews];
     [self renderGutters];
     [self playSuccessSound];
-    [[self window] makeFirstResponder:URLComboBox];
     self.busy = NO;
+    [[self window] makeFirstResponder:URLComboBox];
 }
 
 
 - (void)HTTPService:(id <HTTPService>)service request:(id)cmd didFail:(NSString *)msg {
     [self renderGutters];
     [self playErrorSound];
-    [[self window] makeFirstResponder:URLComboBox];
     self.busy = NO;
+    [[self window] makeFirstResponder:URLComboBox];
 }
 
 
