@@ -18,11 +18,13 @@ NSString *HCSyntaxHighlightRequestResponseTextChangedNotification = @"HCSyntaxHi
 @implementation HCAppDelegate
 
 + (void)initialize {
-    NSString *path = [[NSBundle mainBundle] pathForResource:@"DefaultValues" ofType:@"plist"];
-    id defaultValues = [NSDictionary dictionaryWithContentsOfFile:path];
-    
-    [[NSUserDefaultsController sharedUserDefaultsController] setInitialValues:defaultValues];
-    [[NSUserDefaults standardUserDefaults] registerDefaults:defaultValues];
+    if ([HCAppDelegate class] == self) {
+        NSString *path = [[NSBundle mainBundle] pathForResource:@"DefaultValues" ofType:@"plist"];
+        id defaultValues = [NSDictionary dictionaryWithContentsOfFile:path];
+        
+        [[NSUserDefaultsController sharedUserDefaultsController] setInitialValues:defaultValues];
+        [[NSUserDefaults standardUserDefaults] registerDefaults:defaultValues];
+    }
 }
 
 
