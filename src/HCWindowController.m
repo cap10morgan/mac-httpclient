@@ -31,6 +31,7 @@
 - (void)updateTextWrapInTextView:(NSTextView *)textView withinScrollView:(NSScrollView *)scrollView;
 - (NSAttributedString *)attributedStringForString:(NSString *)s;
 - (void)updateSoureCodeViews;
+- (void)cleanUserAgentStringsInHeaders:(NSArray *)headers;
 @end
 
 @implementation HCWindowController
@@ -133,7 +134,13 @@
 //        [command setObject:URLString forKey:@"URLString"];
 //    }
     
-    [command setObject:[headersController arrangedObjects] forKey:@"headers"];
+    
+    NSArray *headers = [headersController arrangedObjects];
+    
+    // trim out the user-friendly UA names in any user-agent string header values
+    [self cleanUserAgentStringsInHeaders:headers];
+    
+    [command setObject:headers forKey:@"headers"];
     [service sendHTTPRequest:command];
     
     if (![recentURLStrings containsObject:[command objectForKey:@"URLString"]]) {
@@ -345,6 +352,23 @@
     [requestTextView setInsertionPointColor:ipColor];
     [responseTextView setInsertionPointColor:ipColor];
 }
+
+
+// trim out the user-friendly UA names in any user-agent string header values
+- (void)cleanUserAgentStringsInHeaders:(NSArray *)headers {
+    for (id headerDict in headers) {
+        if (NSOrderedSame == [[headerDict objectForKey:@"name"] caseInsensitiveCompare:@"user-agent"]) {
+            NSString *value = [headerDict objectForKey:@"value"];
+            NSString *marker = @" --- ";
+            NSRange r = [value rangeOfString:marker];
+            if (NSNotFound != r.location) {
+                value = [value substringFromIndex:r.location + marker.length];
+                [headerDict setObject:value forKey:@"value"];
+            }
+        }
+    }
+}
+
 
 #pragma mark -
 #pragma mark HTTPServiceDelegate
