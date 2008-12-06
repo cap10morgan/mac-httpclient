@@ -248,7 +248,6 @@
     tokenizer.string = s;
     TDToken *eof = [TDToken EOFToken];
     TDToken *tok = nil;
-    TDToken *lastTok = nil;
     BOOL inComment = NO;
     BOOL inCDATA = NO;
     BOOL inPI = NO;
@@ -300,10 +299,6 @@
             [self workOnScript];
         } else {
             [stack addObject:tok];
-        }
-        
-        if (!tok.isWhitespace) {
-            lastTok = tok;
         }
     }
     

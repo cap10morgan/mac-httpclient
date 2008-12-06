@@ -228,7 +228,8 @@ static NSString *makeHTTPRequest(HTTPServiceCFNetworkImpl *self, id delegate, NS
 
 
 - (void)dealloc; {
-    self.delegate = nil;
+    //self.delegate = nil; // clang no likie
+    delegate = nil;
     self.command = nil;
     self.authUsername = nil;
     self.authPassword = nil;

@@ -20,6 +20,6 @@
 @property (retain) NSArray *lineNumberRects;
 @property NSUInteger startLineNumber;
 
-@property (assign) NSScrollView *sourceScrollView;
-@property (assign) NSTextView *sourceTextView;
+@property (retain) NSScrollView *sourceScrollView;
+@property (retain) NSTextView *sourceTextView;
 @end
