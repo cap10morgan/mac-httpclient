@@ -286,6 +286,7 @@
     
     if (wrap) {
         NSSize s = [scrollView bounds].size;
+        s.height = [[textView textContainer] containerSize].height;
         [scrollView setHasHorizontalScroller:NO];
         [[textView textContainer] setContainerSize:s];
         s.width -= 15; // subtract for width of vert scroll gutter? neccesary to prevent annoying slight horz scrolling
@@ -327,10 +328,10 @@
 - (void)updateSoureCodeViews {
     if (command) {
         NSString *rawRequest = [command objectForKey:@"rawRequest"];
-        NSString *rawResponse = [command objectForKey:@"rawResponse"];
         if (rawRequest.length) {
             self.highlightedRawRequest = [self attributedStringForString:rawRequest];
         }
+        NSString *rawResponse = [command objectForKey:@"rawResponse"];
         if (rawResponse.length) {
             self.highlightedRawResponse = [self attributedStringForString:rawResponse];
         }
