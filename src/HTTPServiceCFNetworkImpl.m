@@ -264,8 +264,10 @@ static NSString *makeHTTPRequest(HTTPServiceCFNetworkImpl *self, id delegate, NS
     }
     
     if (!rawResponse.length) {
-        NSLog(@"(( Zero-length response returned from server. ))");
-        [self failure:@""];
+        NSString *s = @"(( Zero-length response returned from server. ))";
+        [command setObject:s forKey:@"rawResponse"];
+        NSLog(s);
+        [self failure:s];
     } else {
         [command setObject:rawResponse forKey:@"rawResponse"];
         [self success:rawResponse];

@@ -32,6 +32,7 @@
 - (NSAttributedString *)attributedStringForString:(NSString *)s;
 - (void)updateSoureCodeViews;
 - (void)cleanUserAgentStringsInHeaders:(NSArray *)headers;
+- (void)requestCompleted:(id)cmd;
 @end
 
 @implementation HCWindowController
@@ -368,10 +369,7 @@
 }
 
 
-#pragma mark -
-#pragma mark HTTPServiceDelegate
-
-- (void)HTTPService:(id <HTTPService>)service didRecieveResponse:(NSString *)rawResponse forRequest:(id)cmd {
+- (void)requestCompleted:(id)cmd {
     if ([[command objectForKey:@"followRedirects"] boolValue]) {
         [URLComboBox setStringValue:[cmd objectForKey:@"finalURLString"]];
     }
@@ -379,17 +377,23 @@
     self.command = cmd;
     [self updateSoureCodeViews];
     [self renderGutters];
-    [self playSuccessSound];
     self.busy = NO;
-    [self openLocation:self]; // focus the url bar
+    [self openLocation:self]; // focus the url bar    
+}
+
+
+#pragma mark -
+#pragma mark HTTPServiceDelegate
+
+- (void)HTTPService:(id <HTTPService>)service didRecieveResponse:(NSString *)rawResponse forRequest:(id)cmd {
+    [self playSuccessSound];
+    [self requestCompleted:cmd];
 }
 
 
 - (void)HTTPService:(id <HTTPService>)service request:(id)cmd didFail:(NSString *)msg {
-    [self renderGutters];
     [self playErrorSound];
-    self.busy = NO;
-    [self openLocation:self]; // focus the url bar
+    [self requestCompleted:cmd];
 }
 
 
