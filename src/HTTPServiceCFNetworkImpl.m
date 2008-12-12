@@ -17,10 +17,50 @@
 - (void)doFailure:(NSString *)msg;
 @end
 
+static NSStringEncoding stringEncodingForHTTPMessageRef(CFHTTPMessageRef message) {
+    
+    // use latin-1 as the default. why not.
+    NSStringEncoding encoding = NSISOLatin1StringEncoding;
+    
+    // get the content-type header field value
+    NSString *contentType = [(id)CFHTTPMessageCopyHeaderFieldValue(message, (CFStringRef)@"Content-Type") autorelease];
+    if (contentType) {
+        
+        // "text/html; charset=utf-8" is common, so just get the good stuff
+        NSRange r = [contentType rangeOfString:@"charset="];
+        if (NSNotFound != r.location) {
+            contentType = [contentType substringFromIndex:r.location + r.length];
+        }
+        
+        // trim whitespace
+        contentType = [contentType stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+        
+        // convert to an NSStringEncoding
+        CFStringEncoding cfStrEnc = CFStringConvertIANACharSetNameToEncoding((CFStringRef)contentType);
+        if (kCFStringEncodingInvalidId != cfStrEnc) {
+            encoding = CFStringConvertEncodingToNSStringEncoding(cfStrEnc);
+        }
+    }
+
+    return encoding;
+}
+
 
 static NSString *getRawStringForHTTPMessageRef(CFHTTPMessageRef message) {
+
+    NSStringEncoding encoding = stringEncodingForHTTPMessageRef(message);
     NSData *data = (NSData *)CFHTTPMessageCopySerializedMessage(message);
-    NSString *result = [[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding] autorelease];
+    NSString *result = [[[NSString alloc] initWithData:data encoding:encoding] autorelease];
+
+    // if the result is nil, give it one last try with utf-8 or preferrably latin-1. i seen this work for servers that lie (sideways glance at reddit.com)
+    if (!result) {
+        if (NSISOLatin1StringEncoding == encoding) {
+            encoding = NSUTF8StringEncoding;
+        } else {
+            encoding = NSISOLatin1StringEncoding;
+        }
+        result = [[[NSString alloc] initWithData:data encoding:encoding] autorelease];
+    }
     [data release];
     return result;
 }
