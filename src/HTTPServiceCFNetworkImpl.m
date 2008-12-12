@@ -17,7 +17,7 @@
 - (void)doFailure:(NSString *)msg;
 @end
 
-static NSStringEncoding stringEncodingForHTTPMessageRef(CFHTTPMessageRef message) {
+static NSStringEncoding stringEncodingForBodyOfHTTPMessageRef(CFHTTPMessageRef message) {
     
     // use latin-1 as the default. why not.
     NSStringEncoding encoding = NSISOLatin1StringEncoding;
@@ -48,11 +48,14 @@ static NSStringEncoding stringEncodingForHTTPMessageRef(CFHTTPMessageRef message
 
 static NSString *getRawStringForHTTPMessageRef(CFHTTPMessageRef message) {
 
-    NSStringEncoding encoding = stringEncodingForHTTPMessageRef(message);
+    // ok so this is weird. we're using the declared content-type string encoding on the entire raw messaage. 
+    // dunno if that makes sense
+    NSStringEncoding encoding = stringEncodingForBodyOfHTTPMessageRef(message);
     NSData *data = (NSData *)CFHTTPMessageCopySerializedMessage(message);
     NSString *result = [[[NSString alloc] initWithData:data encoding:encoding] autorelease];
 
-    // if the result is nil, give it one last try with utf-8 or preferrably latin-1. i seen this work for servers that lie (sideways glance at reddit.com)
+    // if the result is nil, give it one last try with utf-8 or preferrably latin-1. 
+    // ive seen this work for servers that lie (sideways glance at reddit.com)
     if (!result) {
         if (NSISOLatin1StringEncoding == encoding) {
             encoding = NSUTF8StringEncoding;
