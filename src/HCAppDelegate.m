@@ -28,6 +28,15 @@ NSString *HCSyntaxHighlightRequestResponseTextChangedNotification = @"HCSyntaxHi
 }
 
 
+- (id)init {
+    self = [super init];
+    if (self) {
+        
+    }
+    return self;
+}
+
+
 - (void)dealloc {
     [super dealloc];
 }

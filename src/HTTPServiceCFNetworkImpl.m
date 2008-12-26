@@ -11,130 +11,23 @@
 
 @interface HTTPServiceCFNetworkImpl ()
 - (void)doSendHTTPRequest;
+- (NSString *)makeHTTPRequestWithURL:(NSURL *)URL 
+                              method:(NSString *)method 
+                                body:(NSString *)body 
+                             headers:(NSArray *)headers 
+                     followRedirects:(BOOL)followRedirects 
+                   getFinalURLString:(NSString **)outFinalURLString;
+
+- (CFHTTPMessageRef)createHTTPRequestWithURL:(NSURL *)URL method:(NSString *)method body:(NSString *)body headers:(NSArray *)headers;
+- (CFHTTPMessageRef)createResponseBySendingHTTPRequest:(CFHTTPMessageRef)req followRedirects:(BOOL)followRedirects;
+- (NSString *)rawStringForHTTPMessage:(CFHTTPMessageRef)message;
+- (NSStringEncoding)stringEncodingForBodyOfHTTPMessage:(CFHTTPMessageRef)message;
+
 - (void)success:(NSString *)rawResponse;
 - (void)doSuccess:(NSString *)rawResponse;
 - (void)failure:(NSString *)msg;
 - (void)doFailure:(NSString *)msg;
 @end
-
-static NSStringEncoding stringEncodingForBodyOfHTTPMessageRef(CFHTTPMessageRef message) {
-    
-    // use latin-1 as the default. why not.
-    NSStringEncoding encoding = NSISOLatin1StringEncoding;
-    
-    // get the content-type header field value
-    NSString *contentType = [(id)CFHTTPMessageCopyHeaderFieldValue(message, (CFStringRef)@"Content-Type") autorelease];
-    if (contentType) {
-        
-        // "text/html; charset=utf-8" is common, so just get the good stuff
-        NSRange r = [contentType rangeOfString:@"charset="];
-        if (NSNotFound != r.location) {
-            contentType = [contentType substringFromIndex:r.location + r.length];
-        }
-        
-        // trim whitespace
-        contentType = [contentType stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
-        
-        // convert to an NSStringEncoding
-        CFStringEncoding cfStrEnc = CFStringConvertIANACharSetNameToEncoding((CFStringRef)contentType);
-        if (kCFStringEncodingInvalidId != cfStrEnc) {
-            encoding = CFStringConvertEncodingToNSStringEncoding(cfStrEnc);
-        }
-    }
-
-    return encoding;
-}
-
-
-static NSString *getRawStringForHTTPMessageRef(CFHTTPMessageRef message) {
-
-    // ok so this is weird. we're using the declared content-type string encoding on the entire raw messaage. 
-    // dunno if that makes sense
-    NSStringEncoding encoding = stringEncodingForBodyOfHTTPMessageRef(message);
-    NSData *data = (NSData *)CFHTTPMessageCopySerializedMessage(message);
-    NSString *result = [[[NSString alloc] initWithData:data encoding:encoding] autorelease];
-
-    // if the result is nil, give it one last try with utf-8 or preferrably latin-1. 
-    // ive seen this work for servers that lie (sideways glance at reddit.com)
-    if (!result) {
-        if (NSISOLatin1StringEncoding == encoding) {
-            encoding = NSUTF8StringEncoding;
-        } else {
-            encoding = NSISOLatin1StringEncoding;
-        }
-        result = [[[NSString alloc] initWithData:data encoding:encoding] autorelease];
-    }
-    [data release];
-    return result;
-}
-
-
-static CFHTTPMessageRef createHTTPMessageRef(HTTPServiceCFNetworkImpl *self, NSURL *URL, NSString *method, NSString *body, NSArray *headers) {
-
-    CFHTTPMessageRef message = CFHTTPMessageCreateRequest(kCFAllocatorDefault, (CFStringRef)method, (CFURLRef)URL, kCFHTTPVersion1_1);
-    
-    if ([body length]) {
-        CFHTTPMessageSetBody(message, (CFDataRef)[body dataUsingEncoding:NSUTF8StringEncoding]);
-    }
-    
-    for (id header in headers) {
-        NSString *name = [header objectForKey:@"name"];
-        NSString *value = [header objectForKey:@"value"];
-        if ([name length] && [value length]) {
-            CFHTTPMessageSetHeaderFieldValue(message, (CFStringRef)name, (CFStringRef)value);
-        }
-    }
-    
-    NSString *rawMessage = getRawStringForHTTPMessageRef(message);
-    [self.command setObject:rawMessage forKey:@"rawRequest"];
-    
-    return message;
-}
-
-
-static CFHTTPMessageRef createResponseBySendingHTTPRequest(HTTPServiceCFNetworkImpl *self, CFHTTPMessageRef req, BOOL followRedirects) {
-    CFHTTPMessageRef response = NULL;
-    NSMutableData *responseBodyData = [NSMutableData data];
-    
-    CFReadStreamRef stream = CFReadStreamCreateForHTTPRequest(kCFAllocatorDefault, req);
-    CFBooleanRef autoredirect = followRedirects ? kCFBooleanTrue : kCFBooleanFalse;
-    CFReadStreamSetProperty(stream, kCFStreamPropertyHTTPShouldAutoredirect, autoredirect);
-    CFReadStreamOpen(stream);    
-    
-    BOOL done = NO;
-    while (!done) {
-        UInt8 buf[BUFSIZE];
-        CFIndex numBytesRead = CFReadStreamRead(stream, buf, BUFSIZE);
-        if (numBytesRead < 0) {
-            CFStreamError error = CFReadStreamGetError(stream);
-            NSString *msg = [NSString stringWithFormat:@"Network Error. Domain: %d, Code: %d", error.domain, error.error];
-            NSLog(@"%@", msg);
-            [self failure:msg];
-            responseBodyData = nil;
-            done = YES;
-        } else if (numBytesRead == 0) {
-            done = YES;
-        } else {
-            [responseBodyData appendBytes:buf length:numBytesRead];
-        }
-    }
-    
-    CFReadStreamClose(stream);
-    NSInteger streamStatus = CFReadStreamGetStatus(stream);
-        
-    if (kCFStreamStatusError != streamStatus) {
-        response = (CFHTTPMessageRef)CFReadStreamCopyProperty(stream, kCFStreamPropertyHTTPResponseHeader);
-        CFHTTPMessageSetBody(response, (CFDataRef)responseBodyData);
-    }
-    
-    if (stream) {
-        CFRelease(stream);
-        stream = NULL;
-    }
-    
-    return response;
-}
-
 
 static BOOL isAuthChallengeForProxyStatusCode(NSInteger statusCode) {
     return (407 == statusCode);
@@ -144,117 +37,6 @@ static BOOL isAuthChallengeForProxyStatusCode(NSInteger statusCode) {
 static BOOL isAuthChallengeStatusCode(NSInteger statusCode) {
     return (401 == statusCode || isAuthChallengeForProxyStatusCode(statusCode));
 }
-
-
-static NSString *makeHTTPRequest(HTTPServiceCFNetworkImpl *self, id delegate, NSURL *URL, NSString *method, NSString *body, NSArray *headers, BOOL followRedirects, NSString **outFinalURLString) {
-    NSString *result = nil;
-    CFHTTPMessageRef request = createHTTPMessageRef(self, URL, method, body, headers);
-    CFHTTPMessageRef response = NULL;
-    CFHTTPAuthenticationRef auth = NULL;
-    NSInteger count = 0;
-    
-    while (1) {
-        //    send request
-        response = createResponseBySendingHTTPRequest(self, request, followRedirects);
-        
-        if (!response) {
-            result = nil;
-            break;
-        }
-        
-        NSURL *finalURL = (NSURL *)CFHTTPMessageCopyRequestURL(response);
-        (*outFinalURLString) = [finalURL absoluteString];
-        [finalURL release];
-        NSInteger responseStatusCode = CFHTTPMessageGetResponseStatusCode(response);
-        
-        if (!isAuthChallengeStatusCode(responseStatusCode)) {
-            result = getRawStringForHTTPMessageRef(response);
-            break;
-        }
-        
-        if (count) {
-            self.authUsername = nil;
-            self.authPassword = nil;
-        }
-        
-        BOOL forProxy = isAuthChallengeForProxyStatusCode(responseStatusCode);
-        auth = CFHTTPAuthenticationCreateFromResponse(kCFAllocatorDefault, response);
-        
-        NSString *scheme = [(id)CFHTTPAuthenticationCopyMethod(auth) autorelease];
-        NSString *realm  = [(id)CFHTTPAuthenticationCopyRealm(auth) autorelease];
-        NSArray *domains = [(id)CFHTTPAuthenticationCopyDomains(auth) autorelease];
-        NSURL *domain = domains.count ? [domains objectAtIndex:0] : nil;
-        
-        BOOL cancelled = NO;
-        NSString *username = nil;
-        NSString *password = nil;
-        
-        // try the previous username/password first? do we really wanna do that?
-        if (0 == count && self.authUsername.length && self.authPassword.length) {
-            username = self.authUsername;
-            password = self.authPassword;
-        } 
-        cancelled = [delegate getUsername:&username password:&password forAuthScheme:scheme URL:URL realm:realm domain:domain forProxy:forProxy isRetry:count];
-        count++;
-        
-        self.authUsername = username;
-        self.authPassword = password;
-        
-        if (cancelled) {
-            result = nil;
-            break;
-        }        
-        
-        if (request) {
-            CFRelease(request);
-            request = NULL;
-        }
-        if (response) {
-            CFRelease(response);
-            response = NULL;
-        }
-        
-        request = createHTTPMessageRef(self, URL, method, body, headers);
-        
-        NSMutableDictionary *creds = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-            username,  kCFHTTPAuthenticationUsername,
-            password,  kCFHTTPAuthenticationPassword,
-            nil];
-        
-        if (domain && CFHTTPAuthenticationRequiresAccountDomain(auth)) {
-            [creds setObject:[domain absoluteString] forKey:(id)kCFHTTPAuthenticationAccountDomain];
-        }
-
-        Boolean credentialsApplied = CFHTTPMessageApplyCredentialDictionary(request, auth, (CFDictionaryRef)creds, NULL);
-        
-        if (auth) {
-            CFRelease(auth);
-            auth = NULL;
-        }
-
-        if (!credentialsApplied) {
-            NSLog(@"OH BOTHER. Can't add add auth credentials to request. dunno why. FAIL.");
-            result = nil;
-            break;
-        }
-    }
-    
-    if (request) {
-        CFRelease(request);
-        request = NULL;
-    }
-    if (response) {
-        CFRelease(response);
-        response = NULL;
-    }
-    if (auth) {
-        CFRelease(auth);
-        auth = NULL;
-    }
-        
-    return result;
-}
-
 
 @implementation HTTPServiceCFNetworkImpl
 
@@ -300,7 +82,7 @@ static NSString *makeHTTPRequest(HTTPServiceCFNetworkImpl *self, id delegate, NS
     BOOL followRedirects = [[command objectForKey:@"followRedirects"] boolValue];
     
     NSString *finalURLString = nil;
-    NSString *rawResponse = makeHTTPRequest(self, delegate, URL, method, body, headers, followRedirects, &finalURLString);
+    NSString *rawResponse = [self makeHTTPRequestWithURL:URL method:method body:body headers:headers followRedirects:followRedirects getFinalURLString:&finalURLString];
     
     if (finalURLString.length) {
         [command setObject:finalURLString forKey:@"finalURLString"];
@@ -317,6 +99,238 @@ static NSString *makeHTTPRequest(HTTPServiceCFNetworkImpl *self, id delegate, NS
     }
     
     [pool release];
+}
+
+
+- (NSString *)makeHTTPRequestWithURL:(NSURL *)URL method:(NSString *)method body:(NSString *)body headers:(NSArray *)headers followRedirects:(BOOL)followRedirects getFinalURLString:(NSString **)outFinalURLString {
+    NSString *result = nil;
+    CFHTTPMessageRef request = [self createHTTPRequestWithURL:URL method:method body:body headers:headers];
+    CFHTTPMessageRef response = NULL;
+    CFHTTPAuthenticationRef auth = NULL;
+    NSInteger count = 0;
+    
+    while (1) {
+        //    send request
+        response = [self createResponseBySendingHTTPRequest:request followRedirects:followRedirects];
+        
+        if (!response) {
+            result = nil;
+            break;
+        }
+        
+        NSURL *finalURL = (NSURL *)CFHTTPMessageCopyRequestURL(response);
+        (*outFinalURLString) = [finalURL absoluteString];
+        [finalURL release];
+        NSInteger responseStatusCode = CFHTTPMessageGetResponseStatusCode(response);
+        
+        if (!isAuthChallengeStatusCode(responseStatusCode)) {
+            result = [self rawStringForHTTPMessage:response];
+            break;
+        }
+        
+        if (count) {
+            self.authUsername = nil;
+            self.authPassword = nil;
+        }
+        
+        BOOL forProxy = isAuthChallengeForProxyStatusCode(responseStatusCode);
+        auth = CFHTTPAuthenticationCreateFromResponse(kCFAllocatorDefault, response);
+        
+        NSString *scheme = [(id)CFHTTPAuthenticationCopyMethod(auth) autorelease];
+        NSString *realm  = [(id)CFHTTPAuthenticationCopyRealm(auth) autorelease];
+        NSArray *domains = [(id)CFHTTPAuthenticationCopyDomains(auth) autorelease];
+        NSURL *domain = domains.count ? [domains objectAtIndex:0] : nil;
+        
+        BOOL cancelled = NO;
+        NSString *username = nil;
+        NSString *password = nil;
+        
+        // try the previous username/password first? do we really wanna do that?
+        if (0 == count && self.authUsername.length && self.authPassword.length) {
+            username = self.authUsername;
+            password = self.authPassword;
+        } 
+        cancelled = [delegate getUsername:&username password:&password forAuthScheme:scheme URL:URL realm:realm domain:domain forProxy:forProxy isRetry:count];
+        count++;
+        
+        self.authUsername = username;
+        self.authPassword = password;
+        
+        if (cancelled) {
+            result = nil;
+            break;
+        }        
+        
+        if (request) {
+            CFRelease(request);
+            request = NULL;
+        }
+        if (response) {
+            CFRelease(response);
+            response = NULL;
+        }
+        
+        request = [self createHTTPRequestWithURL:URL method:method body:body headers:headers];
+        
+        NSMutableDictionary *creds = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                      username,  kCFHTTPAuthenticationUsername,
+                                      password,  kCFHTTPAuthenticationPassword,
+                                      nil];
+        
+        if (domain && CFHTTPAuthenticationRequiresAccountDomain(auth)) {
+            [creds setObject:[domain absoluteString] forKey:(id)kCFHTTPAuthenticationAccountDomain];
+        }
+        
+        Boolean credentialsApplied = CFHTTPMessageApplyCredentialDictionary(request, auth, (CFDictionaryRef)creds, NULL);
+        
+        if (auth) {
+            CFRelease(auth);
+            auth = NULL;
+        }
+        
+        if (!credentialsApplied) {
+            NSLog(@"OH BOTHER. Can't add add auth credentials to request. dunno why. FAIL.");
+            result = nil;
+            break;
+        }
+    }
+    
+    if (request) {
+        CFRelease(request);
+        request = NULL;
+    }
+    if (response) {
+        CFRelease(response);
+        response = NULL;
+    }
+    if (auth) {
+        CFRelease(auth);
+        auth = NULL;
+    }
+    
+    return result;
+}
+
+
+- (CFHTTPMessageRef)createHTTPRequestWithURL:(NSURL *)URL method:(NSString *)method body:(NSString *)body headers:(NSArray *)headers {
+    
+    CFHTTPMessageRef message = CFHTTPMessageCreateRequest(kCFAllocatorDefault, (CFStringRef)method, (CFURLRef)URL, kCFHTTPVersion1_1);
+    
+    if ([body length]) {
+        CFHTTPMessageSetBody(message, (CFDataRef)[body dataUsingEncoding:NSUTF8StringEncoding]);
+    }
+    
+    for (id header in headers) {
+        NSString *name = [header objectForKey:@"name"];
+        NSString *value = [header objectForKey:@"value"];
+        if ([name length] && [value length]) {
+            CFHTTPMessageSetHeaderFieldValue(message, (CFStringRef)name, (CFStringRef)value);
+        }
+    }
+    
+    NSString *rawMessage = [self rawStringForHTTPMessage:message];
+    [self.command setObject:rawMessage forKey:@"rawRequest"];
+    
+    return message;
+}
+
+
+- (CFHTTPMessageRef)createResponseBySendingHTTPRequest:(CFHTTPMessageRef)req followRedirects:(BOOL)followRedirects {
+    CFHTTPMessageRef response = NULL;
+    NSMutableData *responseBodyData = [NSMutableData data];
+    
+    CFReadStreamRef stream = CFReadStreamCreateForHTTPRequest(kCFAllocatorDefault, req);
+    CFBooleanRef autoredirect = followRedirects ? kCFBooleanTrue : kCFBooleanFalse;
+    CFReadStreamSetProperty(stream, kCFStreamPropertyHTTPShouldAutoredirect, autoredirect);
+    CFReadStreamOpen(stream);    
+    
+    BOOL done = NO;
+    while (!done) {
+        UInt8 buf[BUFSIZE];
+        CFIndex numBytesRead = CFReadStreamRead(stream, buf, BUFSIZE);
+        if (numBytesRead < 0) {
+            CFStreamError error = CFReadStreamGetError(stream);
+            NSString *msg = [NSString stringWithFormat:@"Network Error. Domain: %d, Code: %d", error.domain, error.error];
+            NSLog(@"%@", msg);
+            [self failure:msg];
+            responseBodyData = nil;
+            done = YES;
+        } else if (numBytesRead == 0) {
+            done = YES;
+        } else {
+            [responseBodyData appendBytes:buf length:numBytesRead];
+        }
+    }
+    
+    CFReadStreamClose(stream);
+    NSInteger streamStatus = CFReadStreamGetStatus(stream);
+    
+    if (kCFStreamStatusError != streamStatus) {
+        response = (CFHTTPMessageRef)CFReadStreamCopyProperty(stream, kCFStreamPropertyHTTPResponseHeader);
+        CFHTTPMessageSetBody(response, (CFDataRef)responseBodyData);
+    }
+    
+    if (stream) {
+        CFRelease(stream);
+        stream = NULL;
+    }
+    
+    return response;
+}
+
+
+- (NSString *)rawStringForHTTPMessage:(CFHTTPMessageRef)message {
+    
+    // ok so this is weird. we're using the declared content-type string encoding on the entire raw messaage. 
+    // dunno if that makes sense
+    NSStringEncoding encoding = [self stringEncodingForBodyOfHTTPMessage:message];
+    NSData *data = (NSData *)CFHTTPMessageCopySerializedMessage(message);
+    NSString *result = [[[NSString alloc] initWithData:data encoding:encoding] autorelease];
+    
+    // if the result is nil, give it one last try with utf8 or preferrably latin1. 
+    // ive seen this work for servers that lie (sideways glance at reddit.com)
+    if (!result) {
+        if (NSISOLatin1StringEncoding == encoding) {
+            encoding = NSUTF8StringEncoding;
+        } else {
+            encoding = NSISOLatin1StringEncoding;
+        }
+        result = [[[NSString alloc] initWithData:data encoding:encoding] autorelease];
+    }
+    [data release];
+    return result;
+}
+
+
+- (NSStringEncoding)stringEncodingForBodyOfHTTPMessage:(CFHTTPMessageRef)message {
+    
+    // use latin1 as the default. why not.
+    NSStringEncoding encoding = NSISOLatin1StringEncoding;
+    
+    // get the content-type header field value
+    NSString *contentType = [(id)CFHTTPMessageCopyHeaderFieldValue(message, (CFStringRef)@"Content-Type") autorelease];
+    if (contentType) {
+        
+        // "text/html; charset=utf-8" is common, so just get the good stuff
+        NSRange r = [contentType rangeOfString:@"charset="];
+        if (NSNotFound == r.location) {
+            r = [contentType rangeOfString:@"="];
+        }
+        if (NSNotFound != r.location) {
+            contentType = [contentType substringFromIndex:r.location + r.length];
+        }
+        
+        // trim whitespace
+        contentType = [contentType stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceCharacterSet]];
+        
+        // convert to an NSStringEncoding
+        CFStringEncoding cfStrEnc = CFStringConvertIANACharSetNameToEncoding((CFStringRef)contentType);
+        if (kCFStringEncodingInvalidId != cfStrEnc) {
+            encoding = CFStringConvertEncodingToNSStringEncoding(cfStrEnc);
+        }
+    }
+    
+    return encoding;
 }
 
 

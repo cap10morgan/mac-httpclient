@@ -52,7 +52,7 @@
         result = [NSKeyedArchiver archivedDataWithRootObject:dict];
         if (!result) [NSException raise:@"UnknownError" format:nil];
     } @catch (NSException *e) {
-        *outError = [NSError errorWithDomain:NSOSStatusErrorDomain code:unimpErr userInfo:[e userInfo]];
+        *outError = [NSError errorWithDomain:NSOSStatusErrorDomain code:writErr userInfo:[e userInfo]];
     }
     return result;
 }
@@ -70,7 +70,7 @@
         windowController.recentURLStrings = [dict objectForKey:@"recentURLStrings"];
         [windowController.headersController addObjects:[dict objectForKey:@"headers"]];
     } @catch (NSException *e) {
-        *outError = [NSError errorWithDomain:NSOSStatusErrorDomain code:unimpErr userInfo:[e userInfo]];
+        *outError = [NSError errorWithDomain:NSOSStatusErrorDomain code:readErr userInfo:[e userInfo]];
         result = NO;
     }
     return result;
