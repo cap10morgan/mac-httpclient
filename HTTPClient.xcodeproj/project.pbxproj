@@ -29,8 +29,6 @@
 		D357D8930EE7C0C0009D62AE /* TDGutterView.m in Sources */ = {isa = PBXBuildFile; fileRef = D357D8900EE7C0C0009D62AE /* TDGutterView.m */; };
 		D357D8940EE7C0C0009D62AE /* TDSourceCodeTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = D357D8920EE7C0C0009D62AE /* TDSourceCodeTextView.m */; };
 		D357DA800EE8E08C009D62AE /* TDHtmlSyntaxHighlighter.m in Sources */ = {isa = PBXBuildFile; fileRef = D357DA7F0EE8E08C009D62AE /* TDHtmlSyntaxHighlighter.m */; };
-		D357DA820EE8E11D009D62AE /* TDParseKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D357DA810EE8E11D009D62AE /* TDParseKit.framework */; };
-		D357DACC0EE8E27D009D62AE /* TDParseKit.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = D357DA810EE8E11D009D62AE /* TDParseKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -40,7 +38,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				D357DACC0EE8E27D009D62AE /* TDParseKit.framework in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -86,7 +83,6 @@
 		D357D8920EE7C0C0009D62AE /* TDSourceCodeTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TDSourceCodeTextView.m; path = src/TDSourceCodeTextView.m; sourceTree = "<group>"; };
 		D357DA7E0EE8E08C009D62AE /* TDHtmlSyntaxHighlighter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TDHtmlSyntaxHighlighter.h; path = src/TDHtmlSyntaxHighlighter.h; sourceTree = "<group>"; };
 		D357DA7F0EE8E08C009D62AE /* TDHtmlSyntaxHighlighter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TDHtmlSyntaxHighlighter.m; path = src/TDHtmlSyntaxHighlighter.m; sourceTree = "<group>"; };
-		D357DA810EE8E11D009D62AE /* TDParseKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TDParseKit.framework; path = frameworks/TDParseKit.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -96,7 +92,6 @@
 			files = (
 				8D15AC340486D014006FF6A4 /* Cocoa.framework in Frameworks */,
 				D357D5630EE63376009D62AE /* Security.framework in Frameworks */,
-				D357DA820EE8E11D009D62AE /* TDParseKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -106,7 +101,6 @@
 		1058C7A6FEA54F5311CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				D357DA810EE8E11D009D62AE /* TDParseKit.framework */,
 				D357D5620EE63376009D62AE /* Security.framework */,
 				1058C7A7FEA54F5311CA2CBB /* Cocoa.framework */,
 			);
@@ -157,6 +151,7 @@
 				D357D4E10EE62591009D62AE /* HCPreferencesWindowController.h */,
 				D357D4E20EE62591009D62AE /* HCPreferencesWindowController.m */,
 				D357D8970EE7C0E5009D62AE /* HTTPService */,
+				D385FCF90F05A55D00DB2946 /* SyntaxHighlight */,
 				D357D8960EE7C0C3009D62AE /* SouceCodeTextView */,
 			);
 			name = Classes;
@@ -219,6 +214,13 @@
 				D357D5230EE62958009D62AE /* HTTPServiceCFNetworkImpl.m */,
 			);
 			name = HTTPService;
+			sourceTree = "<group>";
+		};
+		D385FCF90F05A55D00DB2946 /* SyntaxHighlight */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = SyntaxHighlight;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
