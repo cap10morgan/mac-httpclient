@@ -127,13 +127,14 @@
 
 
 - (NSString *)accountNameFromKeychainItem:(SecKeychainItemRef)item {
+    NSString *result = nil;
     OSStatus err = 0;
     UInt32 infoTag = kSecAccountItemAttr;
     UInt32 infoFmt = 0; // string
     SecKeychainAttributeInfo info;
     SecKeychainAttributeList *authAttrList = NULL;
-    void *data;
-    UInt32 dataLen;
+    void *data = NULL;
+    UInt32 dataLen = 0;
     
     info.count = 1;
     info.tag = &infoTag;
@@ -150,7 +151,7 @@
         goto leave; 
     }
     
-    NSString *result = [[[NSString alloc] initWithBytes:authAttrList->attr->data length:authAttrList->attr->length encoding:NSUTF8StringEncoding] autorelease];
+    result = [[[NSString alloc] initWithBytes:authAttrList->attr->data length:authAttrList->attr->length encoding:NSUTF8StringEncoding] autorelease];
 
 leave:
     if (authAttrList) {
@@ -184,7 +185,7 @@ leave:
             { kSecServerItemAttr, host.length, (char *)host.UTF8String },
             { kSecAccountItemAttr, authUsername.length, (char *)authUsername.UTF8String },
             { kSecPortItemAttr, sizeof(SInt16), &port },
-            { kSecPathItemAttr, 0, (char *)@"" },
+            { kSecPathItemAttr, 0, "" },
             { kSecCommentItemAttr, comment.length, (char *)comment.UTF8String },
             { kSecAuthenticationTypeItemAttr, 4, &authType },
             { kSecSecurityDomainItemAttr, realm.length, (char *)realm.UTF8String },
