@@ -41,6 +41,7 @@
 		D385FDF80F05DD9B00DB2946 /* HCSyntaxHighlightController.m in Sources */ = {isa = PBXBuildFile; fileRef = D385FDF70F05DD9B00DB2946 /* HCSyntaxHighlightController.m */; };
 		D385FE800F05F3C400DB2946 /* html.css in Resources */ = {isa = PBXBuildFile; fileRef = D385FE7F0F05F3C400DB2946 /* html.css */; };
 		D385FFA80F0615EB00DB2946 /* TDParseKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D385FFA70F0615EB00DB2946 /* TDParseKit.framework */; };
+		D385FFB50F06168800DB2946 /* TDParseKit.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = D385FFA70F0615EB00DB2946 /* TDParseKit.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -50,6 +51,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				D385FFB50F06168800DB2946 /* TDParseKit.framework in Copy Frameworks */,
 			);
 			name = "Copy Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;

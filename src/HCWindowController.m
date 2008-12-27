@@ -292,7 +292,7 @@
         s.height = [[textView textContainer] containerSize].height;
         [scrollView setHasHorizontalScroller:NO];
         [[textView textContainer] setContainerSize:s];
-        s.width -= 15; // subtract for width of vert scroll gutter? neccesary to prevent annoying slight horz scrolling
+        s.width -= 15.; // subtract for width of vert scroll gutter? neccesary to prevent annoying slight horz scrolling
         [textView setFrameSize:s];
         [[textView textContainer] setWidthTracksTextView:YES];
         [textView setHorizontallyResizable:NO];
