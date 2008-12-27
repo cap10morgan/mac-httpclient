@@ -317,8 +317,8 @@
 
 - (NSAttributedString *)attributedStringForString:(NSString *)s {
     if ([self isSyntaxHighlightOn]) {
-        //return [syntaxHighlighter attributedStringForString:s];
-        return [syntaxHighlightController highlightedStringForString:s];
+        return [syntaxHighlighter attributedStringForString:s];
+        //return [syntaxHighlightController highlightedStringForString:s];
     } else {
         id attrs = [NSDictionary dictionaryWithObjectsAndKeys:
                     [NSColor blackColor], NSForegroundColorAttributeName,
