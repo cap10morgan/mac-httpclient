@@ -12,6 +12,7 @@
 #import "HTTPService.h"
 #import "TDSourceCodeTextView.h"
 #import "TDHtmlSyntaxHighlighter.h"
+#import "HCSyntaxHighlightController.h"
 
 @interface HCWindowController ()
 - (BOOL)shouldPlaySounds;
@@ -39,7 +40,7 @@
 
 - (id)init {
     self = [super initWithWindowNibName:@"HCDocumentWindow"];
-    if (self != nil) {
+    if (self) {
         self.service = [[[NSClassFromString(@"HTTPServiceCFNetworkImpl") alloc] initWithDelegate:self] autorelease];
 
         self.command = [NSMutableDictionary dictionary];
@@ -53,7 +54,8 @@
         path = [[NSBundle mainBundle] pathForResource:@"HeaderValues" ofType:@"plist"];
         self.headerValues = [NSDictionary dictionaryWithContentsOfFile:path];
         
-        self.syntaxHighlighter = [[[TDHtmlSyntaxHighlighter alloc] initWithAttributesForDarkBackground:YES] autorelease];
+        self.syntaxHighlighter = [[[TDHtmlSyntaxHighlighter alloc] initWithAttributesForDarkBackground:YES] autorelease]; // TODO. remove
+        self.syntaxHighlightController = [[[HCSyntaxHighlightController alloc] init] autorelease];
         
         [[NSNotificationCenter defaultCenter] addObserver:self
                                                  selector:@selector(wrapTextChanged:)
@@ -79,6 +81,7 @@
     self.headerNames = nil;
     self.headerValues = nil;
     self.syntaxHighlighter = nil;
+    self.syntaxHighlightController = nil;
     self.authUsername = nil;
     self.authPassword = nil;
     self.authMessage = nil;
@@ -127,13 +130,7 @@
         URLString = [NSString stringWithFormat:@"http://%@", URLString];
         [command setObject:URLString forKey:@"URLString"];
     }
-    
-//    if (NSNotFound == [URLString rangeOfString:@"."].location) {
-//        URLString = [NSString stringWithFormat:@"%@.com", URLString];
-//        [command setObject:URLString forKey:@"URLString"];
-//    }
-    
-    
+        
     NSArray *headers = [headersController arrangedObjects];
     
     // trim out the user-friendly UA names in any user-agent string header values
@@ -303,7 +300,7 @@
         [scrollView setHasHorizontalScroller:YES];
         [textView setHorizontallyResizable:YES];
         [[textView textContainer] setContainerSize:NSMakeSize(MAXFLOAT, MAXFLOAT)];
-        [[textView textContainer] setWidthTracksTextView:NO];    
+        [[textView textContainer] setWidthTracksTextView:NO];
         [textView setMaxSize:NSMakeSize(MAXFLOAT, MAXFLOAT)];
     }
 
@@ -320,7 +317,8 @@
 
 - (NSAttributedString *)attributedStringForString:(NSString *)s {
     if ([self isSyntaxHighlightOn]) {
-        return [syntaxHighlighter attributedStringForString:s];
+        //return [syntaxHighlighter attributedStringForString:s];
+        return [syntaxHighlightController highlightedStringForString:s];
     } else {
         id attrs = [NSDictionary dictionaryWithObjectsAndKeys:
                     [NSColor blackColor], NSForegroundColorAttributeName,
@@ -490,6 +488,7 @@
 @synthesize headerNames;
 @synthesize headerValues;
 @synthesize syntaxHighlighter;
+@synthesize syntaxHighlightController;
 @synthesize authUsername;
 @synthesize authPassword;
 @synthesize authMessage;

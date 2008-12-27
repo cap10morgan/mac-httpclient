@@ -67,7 +67,7 @@
 
 - (id)initWithAttributesForDarkBackground:(BOOL)isDark {
     self = [super init];
-    if (self != nil) {
+    if (self) {
         isDarkBG = isDark;
         
         self.tokenizer = [TDTokenizer tokenizer];

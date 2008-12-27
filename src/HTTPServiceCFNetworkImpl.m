@@ -45,7 +45,7 @@ static BOOL isAuthChallengeStatusCode(NSInteger statusCode) {
 
 - (id)initWithDelegate:(id)d {
     self = [super init];
-    if (self != nil) {
+    if (self) {
         self.delegate = d;
     }
     return self;
