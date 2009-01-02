@@ -29,16 +29,9 @@
 		D357D8930EE7C0C0009D62AE /* TDGutterView.m in Sources */ = {isa = PBXBuildFile; fileRef = D357D8900EE7C0C0009D62AE /* TDGutterView.m */; };
 		D357D8940EE7C0C0009D62AE /* TDSourceCodeTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = D357D8920EE7C0C0009D62AE /* TDSourceCodeTextView.m */; };
 		D357DA800EE8E08C009D62AE /* TDHtmlSyntaxHighlighter.m in Sources */ = {isa = PBXBuildFile; fileRef = D357DA7F0EE8E08C009D62AE /* TDHtmlSyntaxHighlighter.m */; };
-		D385FD600F05A95600DB2946 /* NSArray+TDParseKitAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = D385FD570F05A95600DB2946 /* NSArray+TDParseKitAdditions.m */; };
-		D385FD610F05A95600DB2946 /* NSString+TDParseKitAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = D385FD590F05A95600DB2946 /* NSString+TDParseKitAdditions.m */; };
-		D385FD620F05A95600DB2946 /* TDGenericAssembler.m in Sources */ = {isa = PBXBuildFile; fileRef = D385FD5B0F05A95600DB2946 /* TDGenericAssembler.m */; };
-		D385FD630F05A95600DB2946 /* TDGrammarParserFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = D385FD5D0F05A95600DB2946 /* TDGrammarParserFactory.m */; };
-		D385FD640F05A95600DB2946 /* TDMiniCSSAssembler.m in Sources */ = {isa = PBXBuildFile; fileRef = D385FD5F0F05A95600DB2946 /* TDMiniCSSAssembler.m */; };
 		D385FD780F05AA1A00DB2946 /* mini_css.grammar in Resources */ = {isa = PBXBuildFile; fileRef = D385FD770F05AA1A00DB2946 /* mini_css.grammar */; };
-		D385FDB30F05C11A00DB2946 /* TDSyntaxHighlightController.m in Sources */ = {isa = PBXBuildFile; fileRef = D385FDB20F05C11A00DB2946 /* TDSyntaxHighlightController.m */; };
 		D385FDDE0F05D2A500DB2946 /* json.css in Resources */ = {isa = PBXBuildFile; fileRef = D385FDDC0F05D2A500DB2946 /* json.css */; };
 		D385FDDF0F05D2A500DB2946 /* json.grammar in Resources */ = {isa = PBXBuildFile; fileRef = D385FDDD0F05D2A500DB2946 /* json.grammar */; };
-		D385FDF80F05DD9B00DB2946 /* HCSyntaxHighlightController.m in Sources */ = {isa = PBXBuildFile; fileRef = D385FDF70F05DD9B00DB2946 /* HCSyntaxHighlightController.m */; };
 		D385FE800F05F3C400DB2946 /* html.css in Resources */ = {isa = PBXBuildFile; fileRef = D385FE7F0F05F3C400DB2946 /* html.css */; };
 		D385FFA80F0615EB00DB2946 /* TDParseKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D385FFA70F0615EB00DB2946 /* TDParseKit.framework */; };
 		D385FFB50F06168800DB2946 /* TDParseKit.framework in Copy Frameworks */ = {isa = PBXBuildFile; fileRef = D385FFA70F0615EB00DB2946 /* TDParseKit.framework */; };
@@ -97,23 +90,9 @@
 		D357D8920EE7C0C0009D62AE /* TDSourceCodeTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TDSourceCodeTextView.m; path = src/TDSourceCodeTextView.m; sourceTree = "<group>"; };
 		D357DA7E0EE8E08C009D62AE /* TDHtmlSyntaxHighlighter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TDHtmlSyntaxHighlighter.h; path = src/TDHtmlSyntaxHighlighter.h; sourceTree = "<group>"; };
 		D357DA7F0EE8E08C009D62AE /* TDHtmlSyntaxHighlighter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TDHtmlSyntaxHighlighter.m; path = src/TDHtmlSyntaxHighlighter.m; sourceTree = "<group>"; };
-		D385FD560F05A95600DB2946 /* NSArray+TDParseKitAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSArray+TDParseKitAdditions.h"; path = "src/NSArray+TDParseKitAdditions.h"; sourceTree = "<group>"; };
-		D385FD570F05A95600DB2946 /* NSArray+TDParseKitAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSArray+TDParseKitAdditions.m"; path = "src/NSArray+TDParseKitAdditions.m"; sourceTree = "<group>"; };
-		D385FD580F05A95600DB2946 /* NSString+TDParseKitAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSString+TDParseKitAdditions.h"; path = "src/NSString+TDParseKitAdditions.h"; sourceTree = "<group>"; };
-		D385FD590F05A95600DB2946 /* NSString+TDParseKitAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSString+TDParseKitAdditions.m"; path = "src/NSString+TDParseKitAdditions.m"; sourceTree = "<group>"; };
-		D385FD5A0F05A95600DB2946 /* TDGenericAssembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TDGenericAssembler.h; path = src/TDGenericAssembler.h; sourceTree = "<group>"; };
-		D385FD5B0F05A95600DB2946 /* TDGenericAssembler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TDGenericAssembler.m; path = src/TDGenericAssembler.m; sourceTree = "<group>"; };
-		D385FD5C0F05A95600DB2946 /* TDGrammarParserFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TDGrammarParserFactory.h; path = src/TDGrammarParserFactory.h; sourceTree = "<group>"; };
-		D385FD5D0F05A95600DB2946 /* TDGrammarParserFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TDGrammarParserFactory.m; path = src/TDGrammarParserFactory.m; sourceTree = "<group>"; };
-		D385FD5E0F05A95600DB2946 /* TDMiniCSSAssembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TDMiniCSSAssembler.h; path = src/TDMiniCSSAssembler.h; sourceTree = "<group>"; };
-		D385FD5F0F05A95600DB2946 /* TDMiniCSSAssembler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TDMiniCSSAssembler.m; path = src/TDMiniCSSAssembler.m; sourceTree = "<group>"; };
 		D385FD770F05AA1A00DB2946 /* mini_css.grammar */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = mini_css.grammar; path = res/mini_css.grammar; sourceTree = "<group>"; };
-		D385FDB10F05C11A00DB2946 /* TDSyntaxHighlightController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TDSyntaxHighlightController.h; path = src/TDSyntaxHighlightController.h; sourceTree = "<group>"; };
-		D385FDB20F05C11A00DB2946 /* TDSyntaxHighlightController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TDSyntaxHighlightController.m; path = src/TDSyntaxHighlightController.m; sourceTree = "<group>"; };
 		D385FDDC0F05D2A500DB2946 /* json.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; name = json.css; path = res/json.css; sourceTree = "<group>"; };
 		D385FDDD0F05D2A500DB2946 /* json.grammar */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = json.grammar; path = res/json.grammar; sourceTree = "<group>"; };
-		D385FDF60F05DD9B00DB2946 /* HCSyntaxHighlightController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HCSyntaxHighlightController.h; path = src/HCSyntaxHighlightController.h; sourceTree = "<group>"; };
-		D385FDF70F05DD9B00DB2946 /* HCSyntaxHighlightController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HCSyntaxHighlightController.m; path = src/HCSyntaxHighlightController.m; sourceTree = "<group>"; };
 		D385FE7E0F05F27200DB2946 /* html.grammar */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = html.grammar; path = res/html.grammar; sourceTree = "<group>"; };
 		D385FE7F0F05F3C400DB2946 /* html.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; name = html.css; path = res/html.css; sourceTree = "<group>"; };
 		D385FFA70F0615EB00DB2946 /* TDParseKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = TDParseKit.framework; path = frameworks/TDParseKit.framework; sourceTree = "<group>"; };
@@ -187,7 +166,6 @@
 				D357D4E10EE62591009D62AE /* HCPreferencesWindowController.h */,
 				D357D4E20EE62591009D62AE /* HCPreferencesWindowController.m */,
 				D357D8970EE7C0E5009D62AE /* HTTPService */,
-				D385FCF90F05A55D00DB2946 /* SyntaxHighlight */,
 				D357D8960EE7C0C3009D62AE /* SouceCodeTextView */,
 			);
 			name = Classes;
@@ -252,27 +230,6 @@
 				D357D5230EE62958009D62AE /* HTTPServiceCFNetworkImpl.m */,
 			);
 			name = HTTPService;
-			sourceTree = "<group>";
-		};
-		D385FCF90F05A55D00DB2946 /* SyntaxHighlight */ = {
-			isa = PBXGroup;
-			children = (
-				D385FDB10F05C11A00DB2946 /* TDSyntaxHighlightController.h */,
-				D385FDB20F05C11A00DB2946 /* TDSyntaxHighlightController.m */,
-				D385FDF60F05DD9B00DB2946 /* HCSyntaxHighlightController.h */,
-				D385FDF70F05DD9B00DB2946 /* HCSyntaxHighlightController.m */,
-				D385FD560F05A95600DB2946 /* NSArray+TDParseKitAdditions.h */,
-				D385FD570F05A95600DB2946 /* NSArray+TDParseKitAdditions.m */,
-				D385FD580F05A95600DB2946 /* NSString+TDParseKitAdditions.h */,
-				D385FD590F05A95600DB2946 /* NSString+TDParseKitAdditions.m */,
-				D385FD5C0F05A95600DB2946 /* TDGrammarParserFactory.h */,
-				D385FD5D0F05A95600DB2946 /* TDGrammarParserFactory.m */,
-				D385FD5E0F05A95600DB2946 /* TDMiniCSSAssembler.h */,
-				D385FD5F0F05A95600DB2946 /* TDMiniCSSAssembler.m */,
-				D385FD5A0F05A95600DB2946 /* TDGenericAssembler.h */,
-				D385FD5B0F05A95600DB2946 /* TDGenericAssembler.m */,
-			);
-			name = SyntaxHighlight;
 			sourceTree = "<group>";
 		};
 		D385FDE00F05D2A800DB2946 /* CSS */ = {
@@ -372,13 +329,6 @@
 				D357D8930EE7C0C0009D62AE /* TDGutterView.m in Sources */,
 				D357D8940EE7C0C0009D62AE /* TDSourceCodeTextView.m in Sources */,
 				D357DA800EE8E08C009D62AE /* TDHtmlSyntaxHighlighter.m in Sources */,
-				D385FD600F05A95600DB2946 /* NSArray+TDParseKitAdditions.m in Sources */,
-				D385FD610F05A95600DB2946 /* NSString+TDParseKitAdditions.m in Sources */,
-				D385FD620F05A95600DB2946 /* TDGenericAssembler.m in Sources */,
-				D385FD630F05A95600DB2946 /* TDGrammarParserFactory.m in Sources */,
-				D385FD640F05A95600DB2946 /* TDMiniCSSAssembler.m in Sources */,
-				D385FDB30F05C11A00DB2946 /* TDSyntaxHighlightController.m in Sources */,
-				D385FDF80F05DD9B00DB2946 /* HCSyntaxHighlightController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
