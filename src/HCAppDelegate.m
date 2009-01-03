@@ -33,6 +33,10 @@ NSString *HCSyntaxHighlightRequestResponseTextChangedNotification = @"HCSyntaxHi
 - (id)init {
     self = [super init];
     if (self) {
+        [[NSAppleEventManager sharedAppleEventManager] setEventHandler:self 
+                                                           andSelector:@selector(getURLEvent:withReplyEvent:) 
+                                                         forEventClass:kInternetEventClass 
+                                                            andEventID:kAEGetURL];        
     }
     return self;
 }
@@ -48,10 +52,6 @@ NSString *HCSyntaxHighlightRequestResponseTextChangedNotification = @"HCSyntaxHi
 #pragma mark NSApplicationDelegate
 
 - (void)applicationDidFinishLaunching:(NSNotification *)n {
-    [[NSAppleEventManager sharedAppleEventManager] setEventHandler:self 
-                                                       andSelector:@selector(getURLEvent:withReplyEvent:) 
-                                                     forEventClass:kInternetEventClass 
-                                                        andEventID:kAEGetURL];        
 }
 
 
@@ -70,20 +70,23 @@ NSString *HCSyntaxHighlightRequestResponseTextChangedNotification = @"HCSyntaxHi
     NSString *URLString = [[event paramDescriptorForKeyword:keyDirectObject] stringValue];
     
     NSError *err = nil;
-    id doc = [[NSDocumentController sharedDocumentController] openUntitledDocumentAndDisplay:YES error:&err];
+    HCDocument *doc = [[NSDocumentController sharedDocumentController] openUntitledDocumentAndDisplay:YES error:&err];
     if (err) {
-        NSBeep();
-        NSLog(@"%@", err);
+        NSString *title = NSLocalizedString(@"Can't open URL sent from other application.", @"");
+        NSString *msgFormat = NSLocalizedString(@"URL: %@\nError:%@", @"");
+        NSString *defaultButton = NSLocalizedString(@"OK", @"");
+        NSRunAlertPanel(title, msgFormat, defaultButton, nil, nil, URLString, err);
         return;
     }
     
-    HCWindowController *winController = [doc windowController];
+    HCWindowController *winController = doc.windowController;
 
     id cmd = [NSMutableDictionary dictionaryWithObjectsAndKeys:
               URLString, @"URLString",
               @"GET", @"method",
               nil];
     winController.command = cmd;
+
     [winController execute:self];
 }
 
