@@ -39,7 +39,7 @@
 
     if (keychainItem && !isRetry) {
         NSString *accountString = [self accountNameFromKeychainItem:keychainItem];
-        NSLog(@"found username and password in keychain!!!! %@, %@", accountString, passwordString);
+        //NSLog(@"found username and password in keychain!!!! %@, %@", accountString, passwordString);
         self.authUsername = accountString;
         self.authPassword = passwordString;
     } else {
@@ -200,7 +200,7 @@ leave:
                                                   (SecAccessRef)NULL, //access,
                                                   &keychainItemRef);
         if (!status) {
-            NSLog(@"keychain item creation failed");
+            //NSLog(@"keychain item creation failed");
         }
     } else {
         SecKeychainAttribute attrs[] = {
@@ -210,7 +210,7 @@ leave:
         
         status = SecKeychainItemModifyAttributesAndData(keychainItemRef, &attributes, passwordData.length, (void *)passwordData.bytes);
         if (status) {
-            NSLog(@"Failed to change password in keychain.");
+            //NSLog(@"Failed to change password in keychain.");
         }        
     }
 }
