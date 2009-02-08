@@ -11,6 +11,7 @@
 
 @interface HCDocument : NSDocument {
     HCWindowController *windowController;
+	NSDictionary *config;
 }
 @property (nonatomic, retain) HCWindowController *windowController;
 @end

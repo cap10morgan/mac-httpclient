@@ -8,13 +8,15 @@
 #import "HCDocument.h"
 #import "HCWindowController.h"
 
+@interface HCDocument ()
+@property (nonatomic, retain) NSDictionary *config;
+@end
+
 @implementation HCDocument
 
 - (id)init {
     self = [super init];
     if (self) {
-        // this must be created in -init rather than -makeWindowControllers so it is available in -readData:ofType:error:
-        self.windowController = [[[HCWindowController alloc] init] autorelease];
     }
     return self;
 }
@@ -22,6 +24,7 @@
 
 - (void)dealloc {
     self.windowController = nil;
+	self.config = nil;
     [super dealloc];
 }
 
@@ -30,6 +33,17 @@
 #pragma mark NSDocument
 
 - (void)makeWindowControllers {
+	self.windowController = [[[HCWindowController alloc] init] autorelease];
+
+	if (config) {
+		[[windowController window] setFrameFromString:[config objectForKey:@"windowFrameString"]];
+		windowController.bodyShown = [[config objectForKey:@"bodyShown"] boolValue];
+		windowController.command = [config objectForKey:@"command"];
+		windowController.recentURLStrings = [config objectForKey:@"recentURLStrings"];
+		[windowController.headersController addObjects:[config objectForKey:@"headers"]];
+		self.config = nil;
+	}
+	
     [self addWindowController:windowController];
 }
 
@@ -61,14 +75,8 @@
 - (BOOL)readFromData:(NSData *)data ofType:(NSString *)typeName error:(NSError **)outError {
     BOOL result = YES;
     @try {
-        id dict = [NSKeyedUnarchiver unarchiveObjectWithData:data];
-        if (!dict) [NSException raise:@"UnknownError" format:nil];
-        
-        [[windowController window] setFrameFromString:[dict objectForKey:@"windowFrameString"]];
-        windowController.bodyShown = [[dict objectForKey:@"bodyShown"] boolValue];
-        windowController.command = [dict objectForKey:@"command"];
-        windowController.recentURLStrings = [dict objectForKey:@"recentURLStrings"];
-        [windowController.headersController addObjects:[dict objectForKey:@"headers"]];
+        self.config = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+        if (!config) [NSException raise:@"UnknownError" format:nil];
     } @catch (NSException *e) {
         *outError = [NSError errorWithDomain:NSOSStatusErrorDomain code:readErr userInfo:[e userInfo]];
         result = NO;
@@ -77,4 +85,5 @@
 }
 
 @synthesize windowController;
+@synthesize config;
 @end
