@@ -18,8 +18,8 @@
                      followRedirects:(BOOL)followRedirects 
                    getFinalURLString:(NSString **)outFinalURLString;
 
-- (CFHTTPMessageRef)createHTTPRequestWithURL:(NSURL *)URL method:(NSString *)method body:(NSString *)body headers:(NSArray *)headers;
-- (CFHTTPMessageRef)createResponseBySendingHTTPRequest:(CFHTTPMessageRef)req followRedirects:(BOOL)followRedirects;
+- (CFHTTPMessageRef)copyHTTPRequestWithURL:(NSURL *)URL method:(NSString *)method body:(NSString *)body headers:(NSArray *)headers;
+- (CFHTTPMessageRef)copyResponseBySendingHTTPRequest:(CFHTTPMessageRef)req followRedirects:(BOOL)followRedirects;
 - (NSString *)rawStringForHTTPMessage:(CFHTTPMessageRef)message;
 - (NSStringEncoding)stringEncodingForBodyOfHTTPMessage:(CFHTTPMessageRef)message;
 
@@ -104,14 +104,14 @@ static BOOL isAuthChallengeStatusCode(NSInteger statusCode) {
 
 - (NSString *)makeHTTPRequestWithURL:(NSURL *)URL method:(NSString *)method body:(NSString *)body headers:(NSArray *)headers followRedirects:(BOOL)followRedirects getFinalURLString:(NSString **)outFinalURLString {
     NSString *result = nil;
-    CFHTTPMessageRef request = [self createHTTPRequestWithURL:URL method:method body:body headers:headers];
+    CFHTTPMessageRef request = [self copyHTTPRequestWithURL:URL method:method body:body headers:headers];
     CFHTTPMessageRef response = NULL;
     CFHTTPAuthenticationRef auth = NULL;
     NSInteger count = 0;
     
     while (1) {
         //    send request
-        response = [self createResponseBySendingHTTPRequest:request followRedirects:followRedirects];
+        response = [self copyResponseBySendingHTTPRequest:request followRedirects:followRedirects];
         
         if (!response) {
             result = nil;
@@ -170,7 +170,7 @@ static BOOL isAuthChallengeStatusCode(NSInteger statusCode) {
             response = NULL;
         }
         
-        request = [self createHTTPRequestWithURL:URL method:method body:body headers:headers];
+        request = [self copyHTTPRequestWithURL:URL method:method body:body headers:headers];
         
         NSMutableDictionary *creds = [NSMutableDictionary dictionaryWithObjectsAndKeys:
                                       username,  kCFHTTPAuthenticationUsername,
@@ -212,7 +212,7 @@ static BOOL isAuthChallengeStatusCode(NSInteger statusCode) {
 }
 
 
-- (CFHTTPMessageRef)createHTTPRequestWithURL:(NSURL *)URL method:(NSString *)method body:(NSString *)body headers:(NSArray *)headers {
+- (CFHTTPMessageRef)copyHTTPRequestWithURL:(NSURL *)URL method:(NSString *)method body:(NSString *)body headers:(NSArray *)headers {
     
     CFHTTPMessageRef message = CFHTTPMessageCreateRequest(kCFAllocatorDefault, (CFStringRef)method, (CFURLRef)URL, kCFHTTPVersion1_1);
     
@@ -235,7 +235,7 @@ static BOOL isAuthChallengeStatusCode(NSInteger statusCode) {
 }
 
 
-- (CFHTTPMessageRef)createResponseBySendingHTTPRequest:(CFHTTPMessageRef)req followRedirects:(BOOL)followRedirects {
+- (CFHTTPMessageRef)copyResponseBySendingHTTPRequest:(CFHTTPMessageRef)req followRedirects:(BOOL)followRedirects {
     CFHTTPMessageRef response = NULL;
     NSMutableData *responseBodyData = [NSMutableData data];
     
