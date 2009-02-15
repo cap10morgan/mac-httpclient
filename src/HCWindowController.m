@@ -12,6 +12,7 @@
 #import "HTTPService.h"
 #import "TDSourceCodeTextView.h"
 #import "TDHtmlSyntaxHighlighter.h"
+#import "HCHistoryManager.h"
 
 @interface HCWindowController ()
 - (BOOL)shouldPlaySounds;
@@ -45,8 +46,6 @@
         self.command = [NSMutableDictionary dictionary];
         [command setObject:@"GET" forKey:@"method"];
 
-        self.recentURLStrings = [NSMutableArray array];
-        
         NSString *path = [[NSBundle mainBundle] pathForResource:@"HeaderNames" ofType:@"plist"];
         self.headerNames = [NSArray arrayWithContentsOfFile:path];
         
@@ -72,7 +71,6 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     self.service = nil;
     self.headersController = nil;
-    self.recentURLStrings = nil;
     self.command = nil;
     self.highlightedRawRequest = nil;
     self.highlightedRawResponse = nil;
@@ -112,6 +110,15 @@
 }
 
 
+- (IBAction)historyMenuItemAction:(id)sender {
+	NSString *URLString = [sender title];
+	
+	//[URLComboBox setStringValue:URLString];
+	[command setObject:URLString forKey:@"URLString"];
+	[self execute:self];
+}
+
+
 - (IBAction)execute:(id)sender {
     [self clear:self];
     
@@ -135,10 +142,6 @@
     
     [command setObject:headers forKey:@"headers"];
     [service sendHTTPRequest:command];
-    
-    if (![recentURLStrings containsObject:[command objectForKey:@"URLString"]]) {
-        [recentURLStrings addObject:[command objectForKey:@"URLString"]];
-    }
 }
 
 
@@ -381,6 +384,7 @@
 
 - (void)HTTPService:(id <HTTPService>)service didRecieveResponse:(NSString *)rawResponse forRequest:(id)cmd {
     [self playSuccessSound];
+	[[HCHistoryManager instance] add:[cmd objectForKey:@"finalURLString"]];
     [self requestCompleted:cmd];
 }
 
@@ -395,12 +399,12 @@
 #pragma mark NSComboBoxDataSource
 
 - (NSInteger)numberOfItemsInComboBox:(NSComboBox *)aComboBox {
-    return [recentURLStrings count];
+    return [[HCHistoryManager instance] count];
 }
 
 
 - (id)comboBox:(NSComboBox *)aComboBox objectValueForItemAtIndex:(NSInteger)index {
-    return [recentURLStrings objectAtIndex:index];    
+    return [[HCHistoryManager instance] objectAtIndex:index];    
 }
 
 
@@ -475,7 +479,6 @@
 
 @synthesize service;
 @synthesize headersController;
-@synthesize recentURLStrings;
 @synthesize command;
 @synthesize highlightedRawRequest;
 @synthesize highlightedRawResponse;

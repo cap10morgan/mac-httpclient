@@ -39,7 +39,6 @@
 		[[windowController window] setFrameFromString:[config objectForKey:@"windowFrameString"]];
 		windowController.bodyShown = [[config objectForKey:@"bodyShown"] boolValue];
 		windowController.command = [config objectForKey:@"command"];
-		windowController.recentURLStrings = [config objectForKey:@"recentURLStrings"];
 		[windowController.headersController addObjects:[config objectForKey:@"headers"]];
 		self.config = nil;
 	}
@@ -60,7 +59,6 @@
         [cmd setObject:@"" forKey:@"rawResponse"];
         
         [dict setObject:cmd forKey:@"command"];
-        [dict setObject:windowController.recentURLStrings forKey:@"recentURLStrings"];
         [dict setObject:[windowController.headersController arrangedObjects] forKey:@"headers"];
         
         result = [NSKeyedArchiver archivedDataWithRootObject:dict];

@@ -23,7 +23,6 @@
     IBOutlet NSArrayController *headersController;
     id <HTTPService>service;
     
-    NSMutableArray *recentURLStrings;
     NSMutableDictionary *command;
     NSAttributedString *highlightedRawRequest;
     NSAttributedString *highlightedRawResponse;
@@ -46,6 +45,7 @@
     BOOL rememberAuthPassword;    
 }
 - (IBAction)openLocation:(id)sender;
+- (IBAction)historyMenuItemAction:(id)sender;
 - (IBAction)execute:(id)sender;
 - (IBAction)clear:(id)sender;
 - (IBAction)showRequest:(id)sender;
@@ -53,7 +53,6 @@
 
 @property (nonatomic, retain) id <HTTPService>service;
 @property (nonatomic, retain) NSArrayController *headersController;
-@property (nonatomic, retain) NSMutableArray *recentURLStrings;
 
 @property (nonatomic, retain) id command;
 @property (nonatomic, copy) NSAttributedString *highlightedRawRequest;

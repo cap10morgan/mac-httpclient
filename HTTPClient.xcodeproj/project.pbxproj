@@ -32,6 +32,7 @@
 		D357D8930EE7C0C0009D62AE /* TDGutterView.m in Sources */ = {isa = PBXBuildFile; fileRef = D357D8900EE7C0C0009D62AE /* TDGutterView.m */; };
 		D357D8940EE7C0C0009D62AE /* TDSourceCodeTextView.m in Sources */ = {isa = PBXBuildFile; fileRef = D357D8920EE7C0C0009D62AE /* TDSourceCodeTextView.m */; };
 		D357DA800EE8E08C009D62AE /* TDHtmlSyntaxHighlighter.m in Sources */ = {isa = PBXBuildFile; fileRef = D357DA7F0EE8E08C009D62AE /* TDHtmlSyntaxHighlighter.m */; };
+		D36B89010F48CA27004BA0B3 /* HCHistoryManager.m in Sources */ = {isa = PBXBuildFile; fileRef = D36B89000F48CA27004BA0B3 /* HCHistoryManager.m */; };
 		D385FD780F05AA1A00DB2946 /* mini_css.grammar in Resources */ = {isa = PBXBuildFile; fileRef = D385FD770F05AA1A00DB2946 /* mini_css.grammar */; };
 		D385FDDE0F05D2A500DB2946 /* json.css in Resources */ = {isa = PBXBuildFile; fileRef = D385FDDC0F05D2A500DB2946 /* json.css */; };
 		D385FDDF0F05D2A500DB2946 /* json.grammar in Resources */ = {isa = PBXBuildFile; fileRef = D385FDDD0F05D2A500DB2946 /* json.grammar */; };
@@ -96,6 +97,8 @@
 		D357D8920EE7C0C0009D62AE /* TDSourceCodeTextView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TDSourceCodeTextView.m; path = src/TDSourceCodeTextView.m; sourceTree = "<group>"; };
 		D357DA7E0EE8E08C009D62AE /* TDHtmlSyntaxHighlighter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TDHtmlSyntaxHighlighter.h; path = src/TDHtmlSyntaxHighlighter.h; sourceTree = "<group>"; };
 		D357DA7F0EE8E08C009D62AE /* TDHtmlSyntaxHighlighter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TDHtmlSyntaxHighlighter.m; path = src/TDHtmlSyntaxHighlighter.m; sourceTree = "<group>"; };
+		D36B88FF0F48CA27004BA0B3 /* HCHistoryManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HCHistoryManager.h; path = src/HCHistoryManager.h; sourceTree = "<group>"; };
+		D36B89000F48CA27004BA0B3 /* HCHistoryManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = HCHistoryManager.m; path = src/HCHistoryManager.m; sourceTree = "<group>"; };
 		D385FD770F05AA1A00DB2946 /* mini_css.grammar */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = mini_css.grammar; path = res/mini_css.grammar; sourceTree = "<group>"; };
 		D385FDDC0F05D2A500DB2946 /* json.css */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.css; name = json.css; path = res/json.css; sourceTree = "<group>"; };
 		D385FDDD0F05D2A500DB2946 /* json.grammar */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = json.grammar; path = res/json.grammar; sourceTree = "<group>"; };
@@ -173,6 +176,8 @@
 				D357D53B0EE6300E009D62AE /* HCWindowController+HTTPAuth.m */,
 				D357D4E10EE62591009D62AE /* HCPreferencesWindowController.h */,
 				D357D4E20EE62591009D62AE /* HCPreferencesWindowController.m */,
+				D36B88FF0F48CA27004BA0B3 /* HCHistoryManager.h */,
+				D36B89000F48CA27004BA0B3 /* HCHistoryManager.m */,
 				D357D8970EE7C0E5009D62AE /* HTTPService */,
 				D357D8960EE7C0C3009D62AE /* SouceCodeTextView */,
 			);
@@ -339,6 +344,7 @@
 				D357D8930EE7C0C0009D62AE /* TDGutterView.m in Sources */,
 				D357D8940EE7C0C0009D62AE /* TDSourceCodeTextView.m in Sources */,
 				D357DA800EE8E08C009D62AE /* TDHtmlSyntaxHighlighter.m in Sources */,
+				D36B89010F48CA27004BA0B3 /* HCHistoryManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

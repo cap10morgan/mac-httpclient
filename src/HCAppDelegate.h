@@ -7,6 +7,7 @@
 
 #import <Cocoa/Cocoa.h>
 
+extern NSString *HCHistoryListKey;
 extern NSString *HCPlaySuccessFailureSoundsKey;
 extern NSString *HCWrapRequestResponseTextKey;
 extern NSString *HCSyntaxHighlightRequestResponseTextKey;

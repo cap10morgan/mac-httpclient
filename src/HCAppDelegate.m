@@ -10,6 +10,7 @@
 #import "HCWindowController.h"
 #import "HCPreferencesWindowController.h"
 
+NSString *HCHistoryListKey = @"HCHistoryList";
 NSString *HCPlaySuccessFailureSoundsKey = @"HCPlaySuccessFailureSounds";
 NSString *HCWrapRequestResponseTextKey = @"HCWrapRequestResponseText";
 NSString *HCSyntaxHighlightRequestResponseTextKey = @"HCSyntaxHighlightRequestResponseText";
