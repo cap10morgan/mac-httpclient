@@ -242,6 +242,18 @@ static BOOL isAuthChallengeStatusCode(NSInteger statusCode) {
     CFReadStreamRef stream = CFReadStreamCreateForHTTPRequest(kCFAllocatorDefault, req);
     CFBooleanRef autoredirect = followRedirects ? kCFBooleanTrue : kCFBooleanFalse;
     CFReadStreamSetProperty(stream, kCFStreamPropertyHTTPShouldAutoredirect, autoredirect);
+	
+	/* DO SSL Cert Verification Check - GRM 06 MAR 2009 */
+	if ([[[NSUserDefaults standardUserDefaults] objectForKey:HCAcceptUnverifiableSSLTextKey] boolValue]) {
+		CFMutableDictionaryRef secDictRef = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
+				
+		if (secDictRef != nil) { 
+			CFDictionarySetValue(secDictRef, kCFStreamSSLValidatesCertificateChain, kCFBooleanFalse);
+			CFReadStreamSetProperty(stream, kCFStreamPropertySSLSettings, secDictRef);
+			CFRelease(secDictRef);
+		}
+	}
+	
     CFReadStreamOpen(stream);    
     
     BOOL done = NO;

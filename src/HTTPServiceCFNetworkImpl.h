@@ -7,6 +7,7 @@
 
 #import <Cocoa/Cocoa.h>
 #import "HTTPService.h"
+#import "HCAppDelegate.h"
 
 @interface HTTPServiceCFNetworkImpl : NSObject <HTTPService> {
     id delegate;

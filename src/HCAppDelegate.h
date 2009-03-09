@@ -11,6 +11,7 @@ extern NSString *HCHistoryListKey;
 extern NSString *HCPlaySuccessFailureSoundsKey;
 extern NSString *HCWrapRequestResponseTextKey;
 extern NSString *HCSyntaxHighlightRequestResponseTextKey;
+extern NSString *HCAcceptUnverifiableSSLTextKey;
 
 extern NSString *HCWrapRequestResponseTextChangedNotification;
 extern NSString *HCSyntaxHighlightRequestResponseTextChangedNotification;

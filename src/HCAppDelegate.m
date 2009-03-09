@@ -14,9 +14,11 @@ NSString *HCHistoryListKey = @"HCHistoryList";
 NSString *HCPlaySuccessFailureSoundsKey = @"HCPlaySuccessFailureSounds";
 NSString *HCWrapRequestResponseTextKey = @"HCWrapRequestResponseText";
 NSString *HCSyntaxHighlightRequestResponseTextKey = @"HCSyntaxHighlightRequestResponseText";
+NSString *HCAcceptUnverifiableSSLTextKey = @"HCAcceptUnverifiableSSL";
 
 NSString *HCWrapRequestResponseTextChangedNotification = @"HCWrapRequestResponseTextChangedNotification";
 NSString *HCSyntaxHighlightRequestResponseTextChangedNotification = @"HCSyntaxHighlightRequestResponseTextChangedNotification";
+
 
 @implementation HCAppDelegate
 
