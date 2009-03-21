@@ -13,6 +13,7 @@
 
 @interface HCWindowController : NSWindowController {
     IBOutlet NSComboBox *URLComboBox;
+    IBOutlet NSComboBox *methodComboBox;
     IBOutlet NSTableView *headersTable;
     IBOutlet NSTextView *bodyTextView;
     IBOutlet NSTabView *tabView;
@@ -29,6 +30,7 @@
     BOOL busy;
     BOOL bodyShown;
     
+    NSArray *methods;
     NSArray *headerNames;
     NSDictionary *headerValues;
 
@@ -61,6 +63,7 @@
 @property (nonatomic, getter=isBusy) BOOL busy;
 @property (nonatomic, getter=isBodyShown) BOOL bodyShown;
 
+@property (nonatomic, retain) NSArray *methods;
 @property (nonatomic, retain) NSArray *headerNames;
 @property (nonatomic, retain) NSDictionary *headerValues;
 

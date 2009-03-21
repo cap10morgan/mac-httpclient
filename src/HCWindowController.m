@@ -45,6 +45,8 @@
 
         self.command = [NSMutableDictionary dictionary];
         [command setObject:@"GET" forKey:@"method"];
+        
+        self.methods = [NSArray arrayWithObjects:@"GET", @"POST", @"PUT", @"DELETE", @"HEAD", @"OPTIONS", @"TRACE", @"CONNECT", nil];
 
         NSString *path = [[NSBundle mainBundle] pathForResource:@"HeaderNames" ofType:@"plist"];
         self.headerNames = [NSArray arrayWithContentsOfFile:path];
@@ -74,6 +76,7 @@
     self.command = nil;
     self.highlightedRawRequest = nil;
     self.highlightedRawResponse = nil;
+    self.methods = nil;
     self.headerNames = nil;
     self.headerValues = nil;
     self.syntaxHighlighter = nil;
@@ -398,21 +401,42 @@
 #pragma mark -
 #pragma mark NSComboBoxDataSource
 
-- (NSInteger)numberOfItemsInComboBox:(NSComboBox *)aComboBox {
-    return [[HCHistoryManager instance] count];
+- (NSInteger)numberOfItemsInComboBox:(NSComboBox *)cb {
+    if (cb == methodComboBox) {
+        return [methods count];
+    } else {
+        return [[HCHistoryManager instance] count];
+    }
 }
 
 
-- (id)comboBox:(NSComboBox *)aComboBox objectValueForItemAtIndex:(NSInteger)index {
-    return [[HCHistoryManager instance] objectAtIndex:index];    
+- (id)comboBox:(NSComboBox *)cb objectValueForItemAtIndex:(NSInteger)index {
+    if (cb == methodComboBox) {
+        return [methods objectAtIndex:index];
+    } else {
+        return [[HCHistoryManager instance] objectAtIndex:index];    
+    }
+}
+
+
+- (NSString *)comboBox:(NSComboBox *)cb completedString:(NSString *)s {
+    s = [s uppercaseString];
+    if (cb == methodComboBox) {
+        for (NSString *method in methods) {
+            if ([method hasPrefix:s]) {
+                return method;
+            }
+        }
+    }
+    return nil;
 }
 
 
 #pragma mark -
 #pragma mark NSComboBoxCellDataSource
 
-- (id)comboBoxCell:(NSComboBoxCell *)aComboBoxCell objectValueForItemAtIndex:(NSInteger)index {
-    BOOL isValueCell = [aComboBoxCell tag];
+- (id)comboBoxCell:(NSComboBoxCell *)cell objectValueForItemAtIndex:(NSInteger)index {
+    BOOL isValueCell = [cell tag];
     if (isValueCell) {
         NSDictionary *header = [[headersController selectedObjects] objectAtIndex:0];
         NSString *name = [[header objectForKey:@"name"] lowercaseString];
@@ -428,8 +452,8 @@
 }
 
 
-- (NSInteger)numberOfItemsInComboBoxCell:(NSComboBoxCell *)comboBoxCell {
-    BOOL isValueCell = [comboBoxCell tag];
+- (NSInteger)numberOfItemsInComboBoxCell:(NSComboBoxCell *)cell {
+    BOOL isValueCell = [cell tag];
     if (isValueCell) {
         NSDictionary *header = [[headersController selectedObjects] objectAtIndex:0];
         NSString *name = [[header objectForKey:@"name"] lowercaseString];
@@ -484,6 +508,7 @@
 @synthesize highlightedRawResponse;
 @synthesize busy;
 @synthesize bodyShown;
+@synthesize methods;
 @synthesize headerNames;
 @synthesize headerValues;
 @synthesize syntaxHighlighter;
