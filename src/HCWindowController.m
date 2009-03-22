@@ -82,6 +82,8 @@
     self.methods = nil;
     self.headerNames = nil;
     self.headerValues = nil;
+    self.attachedFilePath = nil;
+    self.attachedFilename = nil;
     self.syntaxHighlighter = nil;
     self.authUsername = nil;
     self.authPassword = nil;
@@ -165,6 +167,45 @@
 
 - (IBAction)showResponse:(id)sender {
     [tabView selectTabViewItemAtIndex:1];
+}
+
+
+- (IBAction)showMultipartBodyView:(id)sender {
+    self.bodyShown = YES;
+    self.multipartBodyShown = YES;
+}
+
+
+- (IBAction)showNormalBodyView:(id)sender {
+    self.bodyShown = YES;
+    if (!self.isMultipartBodyShown) return;
+    
+    self.multipartBodyShown = NO;
+    
+    
+}
+
+
+- (IBAction)runAttachFileSheet:(id)sender {
+    NSOpenPanel *panel = [NSOpenPanel openPanel];
+    [panel setCanChooseFiles:YES];
+    [panel setCanChooseDirectories:NO];
+    [panel setAllowsMultipleSelection:NO];
+    
+    [panel beginSheetForDirectory:nil 
+                             file:nil 
+                            types:nil 
+                   modalForWindow:[self window] 
+                    modalDelegate:self 
+                   didEndSelector:@selector(openPanelDidEnd:returnCode:contextInfo:) 
+                      contextInfo:NULL];
+}
+
+
+- (void)openPanelDidEnd:(NSOpenPanel *)panel returnCode:(NSInteger)code contextInfo:(void *)ctx {
+    if (NSOKButton == code) {
+        self.attachedFilePath = [panel filename];
+    }
 }
 
 
@@ -287,14 +328,29 @@
 
 
 - (void)handleComboBoxTextChanged:(id)sender {
-    NSInteger colIndex = [sender clickedColumn];
+    NSInteger col = [sender clickedColumn];
+    NSInteger row = [sender clickedRow];
     NSMutableDictionary *header = [[headersController selectedObjects] objectAtIndex:0];
     
     //NSLog(@"row: %i, col: %i",rowIndex,colIndex);
-    if (0 == colIndex) { // name changed
+    if (0 == col) { // name changed
         [header setObject:[sender stringValue] forKey:@"name"];
     } else { // value changed
         [header setObject:[sender stringValue] forKey:@"value"];
+    }
+    
+    // if Content-type: multipart/form-data was chosen, we must do some special mutipartformdata-y stuff
+    NSTableView *tv = (NSTableView *)sender;
+    NSTableColumn *column = [[tv tableColumns] objectAtIndex:col];
+    NSString *name  = [[column dataCellForRow:row] stringValue];
+    NSString *value = [[column dataCellForRow:row] stringValue];
+    
+    if ([[name lowercaseString] isEqualToString:@"content-type"]) {
+        if ([[value lowercaseString] isEqualToString:@"multipart/form-data"]) {
+            [self showMultipartBodyView:self];
+        } else {
+            [self showNormalBodyView:self];
+        }
     }
 }
 
@@ -595,6 +651,21 @@
     }
 }
 
+
+- (void)setAttachedFilePath:(NSString *)s {
+    if (s != attachedFilePath) {
+        [self willChangeValueForKey:@"attachedFilePath"];
+        
+        [attachedFilePath autorelease];
+        attachedFilePath = [s retain];
+
+        self.attachedFilename = [s lastPathComponent];
+        
+        [[self document] updateChangeCount:NSChangeDone];
+        [self didChangeValueForKey:@"attachedFilePath"];
+    }
+}
+
 @synthesize service;
 @synthesize headersController;
 @synthesize command;
@@ -605,6 +676,9 @@
 @synthesize methods;
 @synthesize headerNames;
 @synthesize headerValues;
+@synthesize multipartBodyShown;
+@synthesize attachedFilePath;
+@synthesize attachedFilename;
 @synthesize syntaxHighlighter;
 @synthesize authUsername;
 @synthesize authPassword;

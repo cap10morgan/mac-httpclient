@@ -34,6 +34,10 @@
     NSArray *headerNames;
     NSDictionary *headerValues;
 
+    BOOL multipartBodyShown;
+    NSString *attachedFilePath;
+    NSString *attachedFilename;
+    
     TDHtmlSyntaxHighlighter *syntaxHighlighter;
     
     // HTTPAuth
@@ -52,6 +56,9 @@
 - (IBAction)clear:(id)sender;
 - (IBAction)showRequest:(id)sender;
 - (IBAction)showResponse:(id)sender;
+- (IBAction)showMultipartBodyView:(id)sender;
+- (IBAction)showNormalBodyView:(id)sender;
+- (IBAction)runAttachFileSheet:(id)sender;
 
 @property (nonatomic, retain) id <HTTPService>service;
 @property (nonatomic, retain) NSArrayController *headersController;
@@ -66,6 +73,10 @@
 @property (nonatomic, retain) NSArray *methods;
 @property (nonatomic, retain) NSArray *headerNames;
 @property (nonatomic, retain) NSDictionary *headerValues;
+
+@property (nonatomic, getter=isMultipartBodyShown) BOOL multipartBodyShown;
+@property (nonatomic, retain) NSString *attachedFilePath;
+@property (nonatomic, retain) NSString *attachedFilename;
 
 @property (nonatomic, retain) TDHtmlSyntaxHighlighter *syntaxHighlighter;
 

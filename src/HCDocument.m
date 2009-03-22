@@ -38,6 +38,7 @@
 	if (config) {
 		[[windowController window] setFrameFromString:[config objectForKey:@"windowFrameString"]];
 		windowController.bodyShown = [[config objectForKey:@"bodyShown"] boolValue];
+		windowController.multipartBodyShown = [[config objectForKey:@"multipartBodyShown"] boolValue];
 		windowController.command = [config objectForKey:@"command"];
 		[windowController.headersController addObjects:[config objectForKey:@"headers"]];
 		self.config = nil;
@@ -53,6 +54,7 @@
         id dict = [NSMutableDictionary dictionaryWithCapacity:2];
         [dict setObject:[[windowController window] stringWithSavedFrame] forKey:@"windowFrameString"];
         [dict setObject:[NSNumber numberWithBool:windowController.isBodyShown] forKey:@"bodyShown"];
+        [dict setObject:[NSNumber numberWithBool:windowController.isMultipartBodyShown] forKey:@"multipartBodyShown"];
         
         id cmd = [NSMutableDictionary dictionaryWithDictionary:windowController.command];
         [cmd setObject:@"" forKey:@"rawRequest"];
