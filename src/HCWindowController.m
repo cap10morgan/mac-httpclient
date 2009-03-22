@@ -25,6 +25,9 @@
 - (void)setupBodyTextView;
 - (NSFont *)miniSystemFont;
 - (NSComboBoxCell *)comboBoxCellWithTag:(int)tag;
+- (NSArray *)methodsWithPrefixInFieldEditor:(NSText *)text;
+- (NSArray *)headerNamesWithPrefixInFieldEditor:(NSText *)text;
+- (NSArray *)headerNamesWithPrefix:(NSString *)s;
 - (BOOL)isNameRequiringTodaysDateString:(NSString *)name;
 - (NSString *)todaysDateString;
 - (void)changeSizeForBody;
@@ -236,7 +239,50 @@
     [cbCell setAction:@selector(handleComboBoxTextChanged:)];
     [cbCell setTag:tag];
     [cbCell setNumberOfVisibleItems:12];
+    [cbCell setCompletes:YES];
     return cbCell;
+}
+
+
+- (NSArray *)methodsWithPrefixInFieldEditor:(NSText *)text {
+    NSString *s = [text string];
+    if (![s length]) {
+        return methods;
+    }
+
+    s = [s uppercaseString];
+    NSString *prefix = [s substringToIndex:[text selectedRange].location];
+    
+    NSMutableArray *res = [NSMutableArray array];
+    for (NSString *method in methods) {
+        if ([method hasPrefix:prefix]) {
+            [res addObject:method];
+        }
+    }
+    return res;
+}
+
+
+- (NSArray *)headerNamesWithPrefixInFieldEditor:(NSText *)text {
+    NSString *s = [text string];
+    if (![s length]) {
+        return headerNames;
+    }
+    
+    NSString *prefix = [s substringToIndex:[text selectedRange].location];
+    return [self headerNamesWithPrefix:prefix];
+}
+
+
+- (NSArray *)headerNamesWithPrefix:(NSString *)s {
+    NSMutableArray *res = [NSMutableArray array];
+    s = [s lowercaseString];
+    for (NSString *hname in headerNames) {
+        if ([[hname lowercaseString] hasPrefix:s]) {
+            [res addObject:hname];
+        }
+    }
+    return res;
 }
 
 
@@ -399,11 +445,34 @@
 
 
 #pragma mark -
+#pragma mark NSControlDelegate
+
+// Invoked when search combobox contents changes. Tells combox box to reload items in popup menu.
+- (void)controlTextDidChange:(NSNotification *)n {
+    id obj = [n object];
+    if ([obj isKindOfClass:[NSTableView class]]) {
+        NSTableView *tv = (NSTableView *)obj;
+        obj = [[tv tableColumnWithIdentifier:@"headerName"] dataCellForRow:[tv selectedRow]];
+    }
+    
+    // easy cheezy with NSComboBoxes
+    if ([obj isKindOfClass:[NSComboBox class]]) {
+        [obj noteNumberOfItemsChanged];
+        
+    // for some reason we have to be more brute-force with NSComboBoxCell :|
+    } else if ([obj isKindOfClass:[NSComboBoxCell class]]) {
+        [obj noteNumberOfItemsChanged];
+        [obj reloadData];
+    }
+}
+
+
+#pragma mark -
 #pragma mark NSComboBoxDataSource
 
 - (NSInteger)numberOfItemsInComboBox:(NSComboBox *)cb {
     if (cb == methodComboBox) {
-        return [methods count];
+        return [[self methodsWithPrefixInFieldEditor:[cb currentEditor]] count];
     } else {
         return [[HCHistoryManager instance] count];
     }
@@ -412,7 +481,7 @@
 
 - (id)comboBox:(NSComboBox *)cb objectValueForItemAtIndex:(NSInteger)index {
     if (cb == methodComboBox) {
-        return [methods objectAtIndex:index];
+        return [[self methodsWithPrefixInFieldEditor:[cb currentEditor]] objectAtIndex:index];
     } else {
         return [[HCHistoryManager instance] objectAtIndex:index];    
     }
@@ -420,12 +489,10 @@
 
 
 - (NSString *)comboBox:(NSComboBox *)cb completedString:(NSString *)s {
-    s = [s uppercaseString];
     if (cb == methodComboBox) {
-        for (NSString *method in methods) {
-            if ([method hasPrefix:s]) {
-                return method;
-            }
+        NSArray *res = [self methodsWithPrefixInFieldEditor:[cb currentEditor]];
+        if ([res count]) {
+            return [res objectAtIndex:0];
         }
     }
     return nil;
@@ -447,7 +514,8 @@
             return [[headerValues objectForKey:name] objectAtIndex:index];
         }
     } else {
-        return [headerNames objectAtIndex:index];
+        NSText *text = [[self window] fieldEditor:NO forObject:cell];
+        return [[self headerNamesWithPrefixInFieldEditor:text] objectAtIndex:index];
     }
 }
 
@@ -464,11 +532,37 @@
             return [[headerValues objectForKey:name] count];
         }
     } else {
-        return [headerNames count];
+        NSText *text = [[self window] fieldEditor:NO forObject:cell];
+        return [[self headerNamesWithPrefixInFieldEditor:text] count];
     }
 }
 
 
+- (NSString *)comboBoxCell:(NSComboBoxCell *)cell completedString:(NSString *)s {
+    BOOL isValueCell = [cell tag];
+    if (isValueCell) {
+        NSDictionary *header = [[headersController selectedObjects] objectAtIndex:0];
+        NSString *name = [[header objectForKey:@"name"] lowercaseString];
+        
+        NSArray *values = [headerValues objectForKey:name];
+        s = [s lowercaseString];
+        for (NSString *value in values) {
+            if ([[value lowercaseString] hasPrefix:s]) {
+                return value;
+            }
+        }
+        return nil;
+    } else {
+        NSArray *names = [self headerNamesWithPrefix:s];
+        if ([names count]) {
+            return [names objectAtIndex:0];
+        } else {
+            return nil;
+        }
+    }
+}
+
+                 
 #pragma mark -
 #pragma mark NSTabViewDelegate
 
