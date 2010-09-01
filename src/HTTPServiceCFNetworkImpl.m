@@ -91,7 +91,7 @@ static BOOL isAuthChallengeStatusCode(NSInteger statusCode) {
     if (!rawResponse.length) {
         NSString *s = @"(( Zero-length response returned from server. ))";
         [command setObject:s forKey:@"rawResponse"];
-        NSLog(s);
+        NSLog(@"%@", s);
         [self failure:s];
     } else {
         [command setObject:rawResponse forKey:@"rawResponse"];
@@ -243,8 +243,9 @@ static BOOL isAuthChallengeStatusCode(NSInteger statusCode) {
     CFBooleanRef autoredirect = followRedirects ? kCFBooleanTrue : kCFBooleanFalse;
     CFReadStreamSetProperty(stream, kCFStreamPropertyHTTPShouldAutoredirect, autoredirect);
 	
-	/* DO SSL Cert Verification Check - GRM 06 MAR 2009 */
-	if ([[[NSUserDefaults standardUserDefaults] objectForKey:HCAcceptUnverifiableSSLTextKey] boolValue]) {
+	/* DO SSL Cert Verification Check - GRM 06 MAR 2009; ONLY if HTTPS. HTTP gets no reponse. - GRM 01 SEP 2010 */
+	NSURL* url = (NSURL*)CFHTTPMessageCopyRequestURL(req);
+	if ([[url scheme] isEqualToString:@"https"] && [[[NSUserDefaults standardUserDefaults] objectForKey:HCAcceptUnverifiableSSLTextKey] boolValue]) {
 		CFMutableDictionaryRef secDictRef = CFDictionaryCreateMutable(kCFAllocatorDefault, 0, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
 				
 		if (secDictRef != nil) { 
@@ -253,6 +254,7 @@ static BOOL isAuthChallengeStatusCode(NSInteger statusCode) {
 			CFRelease(secDictRef);
 		}
 	}
+	[url release];
 	
     CFReadStreamOpen(stream);    
     
